@@ -1,5 +1,5 @@
+name = "print-parts-shop"
+compatibility_date = "2024-01-01"
+
 [site]
 bucket = "./dist/build/h5"
-
-[env.production]
-name = "print-parts-shop"
