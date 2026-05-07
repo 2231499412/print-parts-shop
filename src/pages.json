@@ -1,0 +1,66 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "印刷零件商城"
+      }
+    },
+    {
+      "path": "pages/category/category",
+      "style": {
+        "navigationBarTitleText": "产品分类"
+      }
+    },
+    {
+      "path": "pages/product/product",
+      "style": {
+        "navigationBarTitleText": "产品详情"
+      }
+    },
+    {
+      "path": "pages/contact/contact",
+      "style": {
+        "navigationBarTitleText": "联系我们"
+      }
+    },
+    {
+      "path": "pages/redirect/redirect",
+      "style": {
+        "navigationBarTitleText": ""
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "印刷零件商城",
+    "navigationBarBackgroundColor": "#1A1D23",
+    "backgroundColor": "#F5F3EF"
+  },
+  "tabBar": {
+    "color": "#8B90A0",
+    "selectedColor": "#B87333",
+    "borderStyle": "black",
+    "backgroundColor": "#1A1D23",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/category/category",
+        "text": "分类",
+        "iconPath": "static/tabbar/category.png",
+        "selectedIconPath": "static/tabbar/category-active.png"
+      },
+      {
+        "pagePath": "pages/contact/contact",
+        "text": "联系我们",
+        "iconPath": "static/tabbar/contact.png",
+        "selectedIconPath": "static/tabbar/contact-active.png"
+      }
+    ]
+  }
+}

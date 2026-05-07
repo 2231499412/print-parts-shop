@@ -1,0 +1,28 @@
+{
+  "shopName": "领航印刷机零件商城",
+  "slogan": "领航印刷机配件 工业一站式采购平台",
+  "wechat": "a18938663681",
+  "phone": "18938663681",
+  "contactName": "黄先生",
+  "qrcode": "/static/code.jpg",
+  "brands": [
+    {
+      "id": "heidelberg",
+      "name": "海德堡",
+      "desc": "德国品质，全球领先",
+      "image": "/static/products/heidelberg.jpg"
+    },
+    {
+      "id": "komori",
+      "name": "小森",
+      "desc": "日本精工，稳定可靠",
+      "image": "/static/products/xiaosen.jpg"
+    },
+    {
+      "id": "roland",
+      "name": "罗兰",
+      "desc": "曼罗兰，印刷之王",
+      "image": "/static/products/roland.jpeg"
+    }
+  ]
+}

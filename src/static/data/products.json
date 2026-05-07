@@ -1,0 +1,90 @@
+[
+  {
+    "id": 1,
+    "name": "胶辊",
+    "brand": "海德堡",
+    "category": "易损件",
+    "image": "/static/products/jiaogun.jpg",
+    "price": "面议",
+    "spec": "直径80mm，适用SM系列",
+    "desc": "耐磨耐高温，原厂品质，适配海德堡全系印刷机",
+    "hot": true
+  },
+  {
+    "id": 2,
+    "name": "墨刀片",
+    "brand": "海德堡",
+    "category": "耗材",
+    "image": "/static/products/modao.jpg",
+    "price": "面议",
+    "spec": "长度1050mm，厚度0.15mm",
+    "desc": "高速印刷专用，刮墨均匀，寿命长",
+    "hot": true
+  },
+  {
+    "id": 3,
+    "name": "橡皮布",
+    "brand": "海德堡",
+    "category": "耗材",
+    "image": "/static/products/xiangpi.jpg",
+    "price": "面议",
+    "spec": "全开尺寸，厚度1.95mm",
+    "desc": "高弹性，印刷网点清晰，耐溶剂",
+    "hot": false
+  },
+  {
+    "id": 4,
+    "name": "递纸牙片",
+    "brand": "小森",
+    "category": "易损件",
+    "image": "/static/products/dizhiya.jpg",
+    "price": "面议",
+    "spec": "适用L系列，含牙垫",
+    "desc": "精准咬合，减少纸张损耗",
+    "hot": false
+  },
+  {
+    "id": 5,
+    "name": "水辊",
+    "brand": "小森",
+    "category": "易损件",
+    "image": "/static/products/shuigun.jpg",
+    "price": "面议",
+    "spec": "直径60mm，含轴承",
+    "desc": "亲水性好，传水均匀，不起杠",
+    "hot": true
+  },
+  {
+    "id": 6,
+    "name": "气阀",
+    "brand": "罗兰",
+    "category": "配件",
+    "image": "/static/products/qifa.jpg",
+    "price": "面议",
+    "spec": "适用700系列",
+    "desc": "控制气路开关，保证印刷稳定",
+    "hot": false
+  },
+  {
+    "id": 7,
+    "name": "牙排总成",
+    "brand": "罗兰",
+    "category": "核心部件",
+    "image": "/static/products/yapai.jpg",
+    "price": "面议",
+    "spec": "含牙片、牙垫、弹簧",
+    "desc": "整排更换，解决套准问题",
+    "hot": false
+  },
+  {
+    "id": 8,
+    "name": "墨键电机",
+    "brand": "海德堡",
+    "category": "电气件",
+    "image": "/static/products/mojian.jpg",
+    "price": "面议",
+    "spec": "步进电机，适用CP2000",
+    "desc": "精确控制墨量，响应快",
+    "hot": false
+  }
+]

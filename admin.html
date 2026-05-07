@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>产品管理后台</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+
+    /* 顶部导航 */
+    .header {
+      background: linear-gradient(135deg, #1a1d23 0%, #2d3039 100%);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 20px;
+    }
+
+    .header .btn-add {
+      background: #b87333;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .header .btn-add:hover {
+      background: #a66528;
+    }
+
+    /* 主容器 */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* 连接状态 */
+    .connection-status {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .connection-status h2 {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .config-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #b87333;
+    }
+
+    .btn-connect {
+      background: #2d3039;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      align-self: flex-end;
+    }
+
+    .btn-connect:hover {
+      background: #3d4150;
+    }
+
+    /* 产品列表 */
+    .products-section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .product-count {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 15px;
+      border: 1px solid #eee;
+    }
+
+    .product-image {
+      width: 100%;
+      height: 150px;
+      background: linear-gradient(145deg, #e8e9ed, #f4f5f7);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-image .placeholder {
+      font-size: 48px;
+      color: #b87333;
+      opacity: 0.3;
+    }
+
+    .product-info {
+      margin-bottom: 12px;
+    }
+
+    .product-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .product-meta {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .tag-brand {
+      color: #b87333;
+      background: rgba(184, 115, 51, 0.1);
+    }
+
+    .tag-category {
+      color: #666;
+      background: #f0f0f0;
+    }
+
+    .product-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: #b87333;
+    }
+
+    .product-spec {
+      font-size: 12px;
+      color: #999;
+      margin-top: 5px;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-edit,
+    .btn-delete {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-edit {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .btn-edit:hover {
+      background: #bbdefb;
+    }
+
+    .btn-delete {
+      background: #ffebee;
+      color: #d32f2f;
+    }
+
+    .btn-delete:hover {
+      background: #ffcdd2;
+    }
+
+    /* 模态框 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .modal-header h2 {
+      font-size: 18px;
+      color: #333;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .modal-form .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-form .form-group label {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    .modal-form .form-group input,
+    .modal-form .form-group select,
+    .modal-form .form-group textarea {
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .modal-form .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .modal-form .form-group input:focus,
+    .modal-form .form-group select:focus,
+    .modal-form .form-group textarea:focus {
+      outline: none;
+      border-color: #b87333;
+    }
+
+    .image-upload {
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .image-upload:hover {
+      border-color: #b87333;
+      background: #fafafa;
+    }
+
+    .image-upload.has-image {
+      padding: 10px;
+    }
+
+    .image-upload img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 6px;
+    }
+
+    .image-upload .upload-text {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .btn-cancel,
+    .btn-save {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn-cancel {
+      background: #f5f5f5;
+      color: #666;
+    }
+
+    .btn-cancel:hover {
+      background: #eee;
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #b87333, #8b5a2b);
+      color: white;
+    }
+
+    .btn-save:hover {
+      background: linear-gradient(135deg, #a66528, #7a4f24);
+    }
+
+    /* 状态提示 */
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      z-index: 2000;
+      display: none;
+    }
+
+    .toast.success {
+      background: #4caf50;
+    }
+
+    .toast.error {
+      background: #f44336;
+    }
+
+    .toast.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state .empty-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+    }
+
+    /* 加载状态 */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .config-form {
+        grid-template-columns: 1fr;
+      }
+
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <div class="header">
+    <h1>📦 产品管理后台</h1>
+    <button class="btn-add" onclick="openModal()">+ 添加产品</button>
+  </div>
+
+  <div class="container">
+    <!-- 连接配置 -->
+    <div class="connection-status">
+      <h2>🔗 GitHub 连接配置</h2>
+      <div class="config-form">
+        <div class="form-group">
+          <label>GitHub 用户名</label>
+          <input type="text" id="githubUsername" placeholder="你的GitHub用户名">
+        </div>
+        <div class="form-group">
+          <label>仓库名称</label>
+          <input type="text" id="githubRepo" value="print-parts-images" placeholder="仓库名">
+        </div>
+        <div class="form-group">
+          <label>访问密码 (Token)</label>
+          <input type="password" id="githubToken" placeholder="GitHub Token">
+        </div>
+        <button class="btn-connect" onclick="connectToGithub()">连接</button>
+      </div>
+    </div>
+
+    <!-- 产品列表 -->
+    <div class="products-section">
+      <div class="section-header">
+        <h2>产品列表</h2>
+        <span class="product-count" id="productCount">共 0 个产品</span>
+      </div>
+      <div id="productsContainer">
+        <div class="loading">加载中...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加/编辑产品模态框 -->
+  <div class="modal" id="productModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">添加产品</h2>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <form class="modal-form" id="productForm" onsubmit="handleSubmit(event)">
+        <input type="hidden" id="productId">
+
+        <div class="form-group">
+          <label>产品图片</label>
+          <div class="image-upload" id="imageUpload" onclick="document.getElementById('productImage').click()">
+            <img id="imagePreview" style="display:none;">
+            <div class="upload-text" id="uploadText">点击上传图片</div>
+          </div>
+          <input type="file" id="productImage" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+        </div>
+
+        <div class="form-group">
+          <label>产品名称 *</label>
+          <input type="text" id="productName" required placeholder="如：胶辊">
+        </div>
+
+        <div class="form-group">
+          <label>品牌 *</label>
+          <select id="productBrand" required>
+            <option value="">请选择品牌</option>
+            <option value="海德堡">海德堡</option>
+            <option value="小森">小森</option>
+            <option value="罗兰">罗兰</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>产品分类 *</label>
+          <select id="productCategory" required>
+            <option value="">请选择分类</option>
+            <option value="易损件">易损件</option>
+            <option value="耗材">耗材</option>
+            <option value="配件">配件</option>
+            <option value="核心部件">核心部件</option>
+            <option value="电气件">电气件</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>价格</label>
+          <input type="text" id="productPrice" placeholder="如：面议 或 150">
+        </div>
+
+        <div class="form-group">
+          <label>规格参数</label>
+          <input type="text" id="productSpec" placeholder="如：直径80mm，适用SM系列">
+        </div>
+
+        <div class="form-group">
+          <label>产品描述</label>
+          <textarea id="productDesc" placeholder="详细描述产品特点..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="productHot"> 设为热门推荐
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeModal()">取消</button>
+          <button type="submit" class="btn-save">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 提示框 -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // 配置
+    const CONFIG = {
+      owner: '',
+      repo: 'print-parts-images',
+      branch: 'main',
+      token: ''
+    };
+
+    // 产品数据
+    let products = [];
+    let currentEditId = null;
+    let selectedImageFile = null;
+
+    // DOM元素
+    const productsContainer = document.getElementById('productsContainer');
+    const productModal = document.getElementById('productModal');
+    const productForm = document.getElementById('productForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const toast = document.getElementById('toast');
+
+    // 初始化
+    function init() {
+      // 从本地存储加载配置
+      const savedConfig = localStorage.getItem('githubConfig');
+      if (savedConfig) {
+        const config = JSON.parse(savedConfig);
+        document.getElementById('githubUsername').value = config.owner || '';
+        document.getElementById('githubRepo').value = config.repo || 'print-parts-images';
+        document.getElementById('githubToken').value = config.token || '';
+        CONFIG.owner = config.owner;
+        CONFIG.repo = config.repo;
+        CONFIG.token = config.token;
+
+        if (CONFIG.owner && CONFIG.token) {
+          loadProducts();
+        }
+      }
+    }
+
+    // 连接到GitHub
+    async function connectToGithub() {
+      CONFIG.owner = document.getElementById('githubUsername').value.trim();
+      CONFIG.repo = document.getElementById('githubRepo').value.trim();
+      CONFIG.token = document.getElementById('githubToken').value.trim();
+
+      if (!CONFIG.owner || !CONFIG.token) {
+        showToast('请填写GitHub用户名和Token', 'error');
+        return;
+      }
+
+      // 保存配置到本地存储
+      localStorage.setItem('githubConfig', JSON.stringify(CONFIG));
+
+      showToast('正在连接...', 'success');
+      await loadProducts();
+    }
+
+    // 加载产品数据
+    async function loadProducts() {
+      productsContainer.innerHTML = '<div class="loading">加载中...</div>';
+
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/data/products.json`,
+          {
+            headers: {
+              'Authorization': `token ${CONFIG.token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const content = decodeURIComponent(escape(atob(data.content)));
+          products = JSON.parse(content);
+          renderProducts();
+          showToast('数据加载成功', 'success');
+        } else if (response.status === 404) {
+          // 文件不存在，创建空数组
+          products = [];
+          renderProducts();
+          await saveProducts();
+        } else {
+          throw new Error('加载失败');
+        }
+      } catch (error) {
+        console.error('加载产品失败:', error);
+        showToast('加载失败，请检查配置', 'error');
+        productsContainer.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><p>加载失败，请检查GitHub配置</p></div>';
+      }
+    }
+
+    // 保存产品数据到GitHub
+    async function saveProducts() {
+      try {
+        // 先获取当前文件的SHA（如果存在）
+        let sha = null;
+        try {
+          const response = await fetch(
+            `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/data/products.json`,
+            {
+              headers: {
+                'Authorization': `token ${CONFIG.token}`,
+                'Accept': 'application/vnd.github.v3+json'
+              }
+            }
+          );
+          if (response.ok) {
+            const data = await response.json();
+            sha = data.sha;
+          }
+        } catch (e) {
+          // 文件不存在
+        }
+
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(products, null, 2))));
+
+        const body = {
+          message: '更新产品数据',
+          content: content,
+          branch: CONFIG.branch
+        };
+
+        if (sha) {
+          body.sha = sha;
+        }
+
+        const response = await fetch(
+          `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/data/products.json`,
+          {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${CONFIG.token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/vnd.github.v3+json'
+            },
+            body: JSON.stringify(body)
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('保存失败');
+        }
+
+        return true;
+      } catch (error) {
+        console.error('保存失败:', error);
+        showToast('保存失败', 'error');
+        return false;
+      }
+    }
+
+    // 渲染产品列表
+    function renderProducts() {
+      document.getElementById('productCount').textContent = `共 ${products.length} 个产品`;
+
+      if (products.length === 0) {
+        productsContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📦</div>
+            <p>暂无产品，点击"添加产品"开始</p>
+          </div>
+        `;
+        return;
+      }
+
+      productsContainer.innerHTML = `
+        <div class="products-grid">
+          ${products.map(product => `
+            <div class="product-card">
+              <div class="product-image">
+                ${product.image
+                  ? `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                  : ''
+                }
+                <div class="placeholder" ${product.image ? 'style="display:none"' : ''}>${product.name[0]}</div>
+              </div>
+              <div class="product-info">
+                <div class="product-name">${product.name}</div>
+                <div class="product-meta">
+                  <span class="tag tag-brand">${product.brand}</span>
+                  <span class="tag tag-category">${product.category}</span>
+                </div>
+                <div class="product-price">${product.price || '面议'}</div>
+                ${product.spec ? `<div class="product-spec">${product.spec}</div>` : ''}
+              </div>
+              <div class="product-actions">
+                <button class="btn-edit" onclick="editProduct(${product.id})">编辑</button>
+                <button class="btn-delete" onclick="deleteProduct(${product.id})">删除</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // 打开模态框
+    function openModal(productId = null) {
+      currentEditId = productId;
+      selectedImageFile = null;
+
+      if (productId) {
+        const product = products.find(p => p.id === productId);
+        if (product) {
+          modalTitle.textContent = '编辑产品';
+          document.getElementById('productId').value = product.id;
+          document.getElementById('productName').value = product.name;
+          document.getElementById('productBrand').value = product.brand;
+          document.getElementById('productCategory').value = product.category;
+          document.getElementById('productPrice').value = product.price || '';
+          document.getElementById('productSpec').value = product.spec || '';
+          document.getElementById('productDesc').value = product.desc || '';
+          document.getElementById('productHot').checked = product.hot || false;
+
+          if (product.image) {
+            document.getElementById('imagePreview').src = product.image;
+            document.getElementById('imagePreview').style.display = 'block';
+            document.getElementById('uploadText').style.display = 'none';
+            document.getElementById('imageUpload').classList.add('has-image');
+          }
+        }
+      } else {
+        modalTitle.textContent = '添加产品';
+        productForm.reset();
+        document.getElementById('imagePreview').style.display = 'none';
+        document.getElementById('uploadText').style.display = 'block';
+        document.getElementById('imageUpload').classList.remove('has-image');
+      }
+
+      productModal.classList.add('active');
+    }
+
+    // 关闭模态框
+    function closeModal() {
+      productModal.classList.remove('active');
+      currentEditId = null;
+      selectedImageFile = null;
+    }
+
+    // 处理图片选择
+    function handleImageSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      selectedImageFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('imagePreview').src = e.target.result;
+        document.getElementById('imagePreview').style.display = 'block';
+        document.getElementById('uploadText').style.display = 'none';
+        document.getElementById('imageUpload').classList.add('has-image');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // 上传图片到GitHub
+    async function uploadImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const base64 = reader.result.split(',')[1];
+          const timestamp = Date.now();
+          const fileName = `products/${timestamp}-${file.name}`;
+
+          try {
+            const response = await fetch(
+              `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${fileName}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `token ${CONFIG.token}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  message: `上传产品图片: ${file.name}`,
+                  content: base64,
+                  branch: CONFIG.branch
+                })
+              }
+            );
+
+            if (response.ok) {
+              const data = await response.json();
+              // 使用jsdelivr CDN加速
+              const imageUrl = `https://cdn.jsdelivr.net/gh/${CONFIG.owner}/${CONFIG.repo}@${CONFIG.branch}/${fileName}`;
+              resolve(imageUrl);
+            } else {
+              reject(new Error('上传失败'));
+            }
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // 提交表单
+    async function handleSubmit(event) {
+      event.preventDefault();
+
+      const productName = document.getElementById('productName').value.trim();
+      const productBrand = document.getElementById('productBrand').value;
+      const productCategory = document.getElementById('productCategory').value;
+      const productPrice = document.getElementById('productPrice').value.trim();
+      const productSpec = document.getElementById('productSpec').value.trim();
+      const productDesc = document.getElementById('productDesc').value.trim();
+      const productHot = document.getElementById('productHot').checked;
+
+      if (!productName || !productBrand || !productCategory) {
+        showToast('请填写必填项', 'error');
+        return;
+      }
+
+      // 上传图片（如果有新图片）
+      let imageUrl = null;
+      if (selectedImageFile) {
+        showToast('正在上传图片...', 'success');
+        try {
+          imageUrl = await uploadImage(selectedImageFile);
+        } catch (error) {
+          showToast('图片上传失败', 'error');
+          return;
+        }
+      }
+
+      if (currentEditId) {
+        // 编辑产品
+        const index = products.findIndex(p => p.id === currentEditId);
+        if (index !== -1) {
+          products[index] = {
+            ...products[index],
+            name: productName,
+            brand: productBrand,
+            category: productCategory,
+            price: productPrice || '面议',
+            spec: productSpec,
+            desc: productDesc,
+            hot: productHot,
+            image: imageUrl || products[index].image
+          };
+        }
+      } else {
+        // 添加产品
+        const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+        products.push({
+          id: newId,
+          name: productName,
+          brand: productBrand,
+          category: productCategory,
+          price: productPrice || '面议',
+          spec: productSpec,
+          desc: productDesc,
+          hot: productHot,
+          image: imageUrl || ''
+        });
+      }
+
+      // 保存到GitHub
+      showToast('正在保存...', 'success');
+      const success = await saveProducts();
+
+      if (success) {
+        showToast(currentEditId ? '产品已更新' : '产品已添加', 'success');
+        closeModal();
+        renderProducts();
+      }
+    }
+
+    // 编辑产品
+    function editProduct(id) {
+      openModal(id);
+    }
+
+    // 删除产品
+    async function deleteProduct(id) {
+      if (!confirm('确定要删除这个产品吗？')) return;
+
+      products = products.filter(p => p.id !== id);
+
+      showToast('正在删除...', 'success');
+      const success = await saveProducts();
+
+      if (success) {
+        showToast('产品已删除', 'success');
+        renderProducts();
+      }
+    }
+
+    // 显示提示
+    function showToast(message, type) {
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // 点击模态框外部关闭
+    productModal.addEventListener('click', (e) => {
+      if (e.target === productModal) {
+        closeModal();
+      }
+    });
+
+    // 初始化
+    init();
+  </script>
+</body>
+</html>
