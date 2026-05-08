@@ -2,14 +2,15 @@
   <view class="page" v-if="product">
     <!-- 产品图片 -->
     <view class="img-box">
-      <view class="img-grid"></view>
-      <view class="img-deco">
+      <image v-if="product.image" class="img-real" :src="product.image" mode="aspectFill" />
+      <view class="img-grid" v-if="!product.image"></view>
+      <view class="img-deco" v-if="!product.image">
         <view class="deco-crosshair">
           <view class="ch-h"></view>
           <view class="ch-v"></view>
         </view>
       </view>
-      <text class="img-text">{{ product.name }}</text>
+      <text class="img-text" v-if="!product.image">{{ product.name }}</text>
       <view class="img-badge">{{ product.category }}</view>
     </view>
 
@@ -52,6 +53,7 @@
     <!-- 底部占位 -->
     <view style="height: 180rpx;"></view>
 
+    <!-- #ifndef MP-WEIXIN -->
     <!-- 底部联系栏 -->
     <view class="bottom-bar">
       <view class="btn btn-wechat" @tap="copyWechat">
@@ -73,12 +75,17 @@
         <text>微信二维码</text>
       </view>
     </view>
+    <!-- #endif -->
+    <!-- #ifdef MP-WEIXIN -->
+    <view style="height: 40rpx;"></view>
+    <!-- #endif -->
   </view>
 </template>
 
 <script>
-import products from '@/static/data/products.json'
-import config from '@/static/data/config.json'
+import { fetchProduct, getConfig } from '@/utils/api'
+
+const config = getConfig()
 
 export default {
   data() {
@@ -87,9 +94,9 @@ export default {
       specList: []
     }
   },
-  onLoad(options) {
+  async onLoad(options) {
     const id = parseInt(options.id)
-    this.product = products.find(p => p.id === id)
+    this.product = await fetchProduct(id)
     if (this.product) {
       this.specList = [
         { label: '产品名称', value: this.product.name },
@@ -182,6 +189,14 @@ export default {
   opacity: 0.25;
   z-index: 1;
   letter-spacing: -2rpx;
+}
+
+.img-real {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
 .img-badge {

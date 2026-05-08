@@ -1,6 +1,60 @@
 <template>
   <view class="page">
-    <!-- 顶部区域 -->
+    <!-- #ifdef MP-WEIXIN -->
+    <!-- 关于页面（小程序版） -->
+    <view class="header">
+      <view class="header-grid"></view>
+      <view class="header-deco"></view>
+      <view class="header-content">
+        <view class="header-title">印刷配件资料库</view>
+        <view class="header-slogan">印刷机配件规格参数速查</view>
+      </view>
+    </view>
+
+    <view class="cards">
+      <view class="card">
+        <view class="card-body">
+          <view class="card-label">应用简介</view>
+          <view class="card-desc">本应用收录海德堡、小森、罗兰等主流印刷机品牌配件的规格参数，方便印刷行业从业者日常查阅参考。</view>
+        </view>
+      </view>
+      <view class="card">
+        <view class="card-body">
+          <view class="card-label">数据来源</view>
+          <view class="card-desc">配件数据来自行业公开资料整理，仅供参考。</view>
+        </view>
+      </view>
+      <view class="card">
+        <view class="card-body">
+          <view class="card-label">版本信息</view>
+          <view class="card-desc">当前版本：v1.0.0</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="qr-section">
+      <view class="qr-title">意见反馈</view>
+      <view class="qr-desc">如有数据纠错或使用问题，欢迎反馈</view>
+      <view class="feedback-phone" @tap="callFeedback">
+        <view class="card-icon-wrap phone-bg">
+          <view class="card-icon-phone"></view>
+        </view>
+        <text class="phone-text">18938663681</text>
+      </view>
+    </view>
+
+    <view class="footer">
+      <view class="footer-divider">
+        <view class="divider-line"></view>
+        <view class="divider-dot"></view>
+        <view class="divider-line"></view>
+      </view>
+      <view class="footer-text">感谢您的使用与支持</view>
+    </view>
+    <!-- #endif -->
+
+    <!-- #ifndef MP-WEIXIN -->
+    <!-- 联系页面（H5版） -->
     <view class="header">
       <view class="header-grid"></view>
       <view class="header-deco"></view>
@@ -14,9 +68,7 @@
       </view>
     </view>
 
-    <!-- 联系方式卡片 -->
     <view class="cards">
-      <!-- 微信 -->
       <view class="card" @tap="copyWechat">
         <view class="card-icon-wrap wechat-bg">
           <view class="card-icon-wechat"></view>
@@ -34,7 +86,6 @@
         </view>
       </view>
 
-      <!-- 电话 -->
       <view class="card" @tap="callPhone">
         <view class="card-icon-wrap phone-bg">
           <view class="card-icon-phone"></view>
@@ -53,7 +104,6 @@
       </view>
     </view>
 
-    <!-- 二维码区域 -->
     <view class="qr-section">
       <view class="qr-title">微信扫码添加</view>
       <view class="qr-box" @tap="previewQrcode">
@@ -67,7 +117,6 @@
       <view class="qr-tip">点击可放大查看</view>
     </view>
 
-    <!-- 底部提示 -->
     <view class="footer">
       <view class="footer-divider">
         <view class="divider-line"></view>
@@ -77,6 +126,7 @@
       <view class="footer-text">如有疑问，欢迎随时联系我们</view>
       <view class="footer-hours">工作时间：周一至周六 8:00-18:00</view>
     </view>
+    <!-- #endif -->
   </view>
 </template>
 
@@ -98,6 +148,9 @@ export default {
     },
     callPhone() {
       uni.makePhoneCall({ phoneNumber: this.config.phone })
+    },
+    callFeedback() {
+      uni.makePhoneCall({ phoneNumber: '18938663681' })
     },
     previewQrcode() {
       uni.previewImage({ urls: [this.config.qrcode] })
@@ -286,6 +339,13 @@ export default {
   letter-spacing: 2rpx;
 }
 
+.card-desc {
+  font-size: 26rpx;
+  color: var(--slate-600);
+  margin-top: 8rpx;
+  line-height: 1.6;
+}
+
 .card-action {
   display: flex;
   align-items: center;
@@ -419,6 +479,27 @@ export default {
   font-size: 22rpx;
   color: var(--slate-300);
   margin-top: 24rpx;
+}
+
+.qr-desc {
+  font-size: 26rpx;
+  color: var(--slate-400);
+  margin-bottom: 32rpx;
+}
+
+.feedback-phone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  cursor: pointer;
+}
+
+.phone-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--slate-900);
+  letter-spacing: 2rpx;
 }
 
 /* ========== 底部 ========== */

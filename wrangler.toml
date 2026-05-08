@@ -1,5 +1,8 @@
 name = "print-parts-shop"
 compatibility_date = "2024-01-01"
+pages_build_output_dir = "./dist/build/h5"
 
-[site]
-bucket = "./dist/build/h5"
+[[d1_databases]]
+binding = "DB"
+database_name = "print-parts-shop-db"
+database_id = "ab6af21a-47a7-4db5-9257-46a8ba821e8f"

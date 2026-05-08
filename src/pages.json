@@ -3,25 +3,35 @@
     {
       "path": "pages/index/index",
       "style": {
+        // #ifdef MP-WEIXIN
+        "navigationBarTitleText": "印刷配件资料库"
+        // #endif
+        // #ifndef MP-WEIXIN
         "navigationBarTitleText": "印刷零件商城"
+        // #endif
       }
     },
     {
       "path": "pages/category/category",
       "style": {
-        "navigationBarTitleText": "产品分类"
+        "navigationBarTitleText": "配件分类"
       }
     },
     {
       "path": "pages/product/product",
       "style": {
-        "navigationBarTitleText": "产品详情"
+        "navigationBarTitleText": "配件详情"
       }
     },
     {
       "path": "pages/contact/contact",
       "style": {
+        // #ifdef MP-WEIXIN
+        "navigationBarTitleText": "关于"
+        // #endif
+        // #ifndef MP-WEIXIN
         "navigationBarTitleText": "联系我们"
+        // #endif
       }
     },
     {
@@ -33,7 +43,12 @@
   ],
   "globalStyle": {
     "navigationBarTextStyle": "white",
+    // #ifdef MP-WEIXIN
+    "navigationBarTitleText": "印刷配件资料库",
+    // #endif
+    // #ifndef MP-WEIXIN
     "navigationBarTitleText": "印刷零件商城",
+    // #endif
     "navigationBarBackgroundColor": "#1A1D23",
     "backgroundColor": "#F5F3EF"
   },
@@ -57,7 +72,12 @@
       },
       {
         "pagePath": "pages/contact/contact",
+        // #ifdef MP-WEIXIN
+        "text": "关于",
+        // #endif
+        // #ifndef MP-WEIXIN
         "text": "联系我们",
+        // #endif
         "iconPath": "static/tabbar/contact.png",
         "selectedIconPath": "static/tabbar/contact-active.png"
       }

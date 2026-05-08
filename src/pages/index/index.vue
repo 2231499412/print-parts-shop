@@ -7,11 +7,23 @@
       <view class="hero-content">
         <view class="hero-badge">
           <view class="badge-dot"></view>
+          <!-- #ifdef MP-WEIXIN -->
+          <text>资料 · 图鉴 · 参考</text>
+          <!-- #endif -->
+          <!-- #ifndef MP-WEIXIN -->
           <text>专业 · 品质 · 信赖</text>
+          <!-- #endif -->
         </view>
+        <!-- #ifdef MP-WEIXIN -->
+        <view class="hero-title">印刷配件资料库</view>
+        <view class="hero-title hero-title-accent">海德堡 · 小森 · 罗兰</view>
+        <view class="hero-desc">印刷机配件规格参数速查</view>
+        <!-- #endif -->
+        <!-- #ifndef MP-WEIXIN -->
         <view class="hero-title">领航印刷机配件</view>
         <view class="hero-title hero-title-accent">工业一站式采购平台</view>
         <view class="hero-desc">海德堡 · 小森 · 罗兰 全系配件</view>
+        <!-- #endif -->
         <view class="hero-search">
           <view class="search-icon">
             <view class="search-icon-circle"></view>
@@ -19,7 +31,7 @@
           </view>
           <input
             class="search-input"
-            placeholder="搜索产品名称，如：胶辊、墨刀片"
+            placeholder="搜索配件名称，如：胶辊、墨刀片"
             v-model="keyword"
             @confirm="goSearch"
           />
@@ -66,7 +78,7 @@
             <view class="brand-name">{{ b.name }}</view>
             <view class="brand-desc">{{ b.desc }}</view>
             <view class="brand-link">
-              <text>浏览产品</text>
+              <text>查看配件</text>
               <view class="arrow-right small">
                 <view class="arrow-line"></view>
                 <view class="arrow-tip"></view>
@@ -77,15 +89,20 @@
       </view>
     </view>
 
-    <!-- 热门产品 -->
+    <!-- 热门配件 -->
     <view class="section">
       <view class="section-header">
         <view class="section-title-wrap">
           <view class="section-title-line"></view>
+          <!-- #ifdef MP-WEIXIN -->
+          <view class="section-title">热门配件</view>
+          <!-- #endif -->
+          <!-- #ifndef MP-WEIXIN -->
           <view class="section-title">热门推荐</view>
+          <!-- #endif -->
         </view>
         <view class="section-more" @tap="goAllCategory">
-          <text>更多产品</text>
+          <text>更多配件</text>
           <view class="arrow-right">
             <view class="arrow-line"></view>
             <view class="arrow-tip"></view>
@@ -101,18 +118,21 @@
           @tap="goProduct(p.id)"
         >
           <view class="product-img">
-            <view class="product-img-deco">
+            <image v-if="p.image" class="product-img-real" :src="p.image" mode="aspectFill" />
+            <view class="product-img-deco" v-if="!p.image">
               <view class="deco-circle"></view>
               <view class="deco-cross"></view>
             </view>
-            <text class="product-img-char">{{ p.name[0] }}</text>
+            <text class="product-img-char" v-if="!p.image">{{ p.name[0] }}</text>
             <view class="product-tag">{{ p.category }}</view>
           </view>
           <view class="product-info">
             <view class="product-name">{{ p.name }}</view>
             <view class="product-spec">{{ p.spec }}</view>
             <view class="product-bottom">
+              <!-- #ifndef MP-WEIXIN -->
               <text class="product-price">{{ p.price }}</text>
+              <!-- #endif -->
               <text class="product-brand-tag">{{ p.brand }}</text>
             </view>
           </view>
@@ -120,6 +140,7 @@
       </view>
     </view>
 
+    <!-- #ifndef MP-WEIXIN -->
     <!-- 优势区 -->
     <view class="section advantage-section">
       <view class="section-header center">
@@ -148,19 +169,21 @@
         </view>
       </view>
     </view>
+    <!-- #endif -->
   </view>
 </template>
 
 <script>
-import products from '@/static/data/products.json'
-import config from '@/static/data/config.json'
+import { fetchProducts, getConfig } from '@/utils/api'
+
+const config = getConfig()
 
 export default {
   data() {
     return {
       keyword: '',
       brands: config.brands,
-      hotProducts: products.filter(p => p.hot),
+      hotProducts: [],
       advantages: [
         { title: '原厂品质', desc: '全部配件经过严格质检' },
         { title: '品牌齐全', desc: '覆盖主流印刷机品牌' },
@@ -168,6 +191,10 @@ export default {
         { title: '专业服务', desc: '10年行业经验团队' }
       ]
     }
+  },
+  async onLoad() {
+    const products = await fetchProducts()
+    this.hotProducts = products.filter(p => p.hot)
   },
   methods: {
     goSearch() {
@@ -610,6 +637,14 @@ export default {
   font-weight: 800;
   opacity: 0.35;
   z-index: 1;
+}
+
+.product-img-real {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
 .product-tag {

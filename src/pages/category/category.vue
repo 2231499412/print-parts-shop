@@ -71,10 +71,11 @@
           @tap="goProduct(p.id)"
         >
           <view class="product-img">
-            <view class="product-img-deco">
+            <image v-if="p.image" class="product-img-real" :src="p.image" mode="aspectFill" />
+            <view class="product-img-deco" v-if="!p.image">
               <view class="deco-circle"></view>
             </view>
-            <text class="product-img-char">{{ p.name[0] }}</text>
+            <text class="product-img-char" v-if="!p.image">{{ p.name[0] }}</text>
           </view>
           <view class="product-info">
             <view class="product-top">
@@ -86,7 +87,9 @@
             </view>
             <view class="product-spec">{{ p.spec }}</view>
             <view class="product-bottom">
+              <!-- #ifndef MP-WEIXIN -->
               <text class="product-price">{{ p.price }}</text>
+              <!-- #endif -->
               <view class="product-detail-btn">
                 <text>查看详情</text>
                 <view class="arrow-right small">
@@ -103,8 +106,9 @@
 </template>
 
 <script>
-import products from '@/static/data/products.json'
-import config from '@/static/data/config.json'
+import { fetchProducts, getConfig } from '@/utils/api'
+
+const config = getConfig()
 
 export default {
   data() {
@@ -112,7 +116,7 @@ export default {
       keyword: '',
       activeBrand: '全部',
       brands: config.brands,
-      allProducts: products
+      allProducts: []
     }
   },
   computed: {
@@ -132,9 +136,10 @@ export default {
       return list
     }
   },
-  onLoad(options) {
+  async onLoad(options) {
     if (options.brand) this.activeBrand = options.brand
     if (options.keyword) this.keyword = options.keyword
+    this.allProducts = await fetchProducts()
   },
   onShow() {
     // 从全局数据读取重定向参数
@@ -439,6 +444,14 @@ export default {
   font-weight: 800;
   opacity: 0.35;
   z-index: 1;
+}
+
+.product-img-real {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
 .product-info {

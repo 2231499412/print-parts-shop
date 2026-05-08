@@ -1,5 +1,5 @@
 {
-    "name" : "",
+    "name" : "印刷配件资料库",
     "appid" : "",
     "description" : "",
     "versionName" : "1.0.0",
@@ -50,11 +50,18 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "",
+        "appid" : "wxbe58d14166dc19a6",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+            "es6": true,
+            "postcss": false,
+            "minified": false,
+            "newFeature": true
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "optimization" : {
+            "subPackages" : false
+        }
     },
     "mp-alipay" : {
         "usingComponents" : true
