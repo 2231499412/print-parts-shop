@@ -88,7 +88,7 @@
       </scroll-view>
 
       <!-- 产品区域 -->
-      <view class="product-area">
+      <scroll-view class="product-area" scroll-y>
         <view class="list-header">
           <text class="list-count">共 {{ filteredProducts.length }} 件产品</text>
         </view>
@@ -171,7 +171,7 @@
             </view>
           </view>
         </view>
-      </view>
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -252,6 +252,9 @@ export default {
 .page {
   background: var(--surface);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 /* ========== 搜索栏 ========== */
@@ -411,6 +414,7 @@ export default {
 .main {
   display: flex;
   flex: 1;
+  height: 0;
 }
 
 /* ========== PC 端左侧品牌 ========== */
@@ -421,6 +425,7 @@ export default {
 /* ========== 产品区域 ========== */
 .product-area {
   flex: 1;
+  height: 0;
   padding-bottom: 40rpx;
 }
 
@@ -625,7 +630,7 @@ export default {
   }
 
   .main {
-    height: calc(100vh - 100rpx);
+    height: 0;
   }
 
   .brand-list {
