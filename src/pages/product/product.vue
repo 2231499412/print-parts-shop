@@ -2,7 +2,7 @@
   <view class="page" v-if="product">
     <!-- 产品图片 -->
     <view class="img-box">
-      <image v-if="product.image" class="img-real" :src="product.image" mode="aspectFill" />
+      <image v-if="product.image" class="img-real" :src="product.image" mode="aspectFit" @tap="previewImage" />
       <view class="img-grid" v-if="!product.image"></view>
       <view class="img-deco" v-if="!product.image">
         <view class="deco-crosshair">
@@ -16,9 +16,9 @@
 
     <!-- 产品信息 -->
     <view class="info-card">
-      <view class="info-top">
-        <view class="name">{{ product.name }}</view>
-        <view class="price">{{ product.price }}</view>
+      <view class="name">{{ product.name }}</view>
+      <view class="price-row">
+        <text class="price">{{ formatPrice(product.price) }}</text>
       </view>
       <view class="meta">
         <text class="tag tag-brand">{{ product.brand }}</text>
@@ -51,10 +51,10 @@
     </view>
 
     <!-- 底部占位 -->
-    <view style="height: 180rpx;"></view>
+    <view style="height: 140rpx;"></view>
 
     <!-- #ifndef MP-WEIXIN -->
-    <!-- 底部联系栏 -->
+    <!-- 底部联系栏（H5） -->
     <view class="bottom-bar">
       <view class="btn btn-wechat" @tap="copyWechat">
         <view class="btn-icon-wrap">
@@ -77,7 +77,18 @@
     </view>
     <!-- #endif -->
     <!-- #ifdef MP-WEIXIN -->
-    <view style="height: 40rpx;"></view>
+    <!-- 底部联系栏（小程序） -->
+    <view class="bottom-bar">
+      <view class="bottom-bar-info">
+        <text class="bottom-bar-tip">如有数据疑问或意见反馈</text>
+      </view>
+      <view class="btn btn-phone" @tap="callPhone">
+        <view class="btn-icon-wrap">
+          <view class="icon-phone"></view>
+        </view>
+        <text>18938663681</text>
+      </view>
+    </view>
     <!-- #endif -->
   </view>
 </template>
@@ -107,6 +118,18 @@ export default {
     }
   },
   methods: {
+    previewImage() {
+      if (this.product && this.product.image) {
+        uni.previewImage({ urls: [this.product.image] })
+      }
+    },
+    formatPrice(price) {
+      if (price === undefined || price === null) return '面议'
+      const str = String(price).trim()
+      if (str === '' || str === '面议') return '面议'
+      if (/^\d+(\.\d+)?$/.test(str)) return str + '元'
+      return str
+    },
     copyWechat() {
       uni.setClipboardData({
         data: config.wechat,
@@ -134,7 +157,7 @@ export default {
 /* ========== 产品图片 ========== */
 .img-box {
   height: 520rpx;
-  background: var(--slate-900);
+  background: #f5f3ef;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -227,17 +250,24 @@ export default {
   animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.info-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
 .name {
   font-size: 38rpx;
   font-weight: 800;
   color: var(--slate-900);
   letter-spacing: -0.5rpx;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.price-label {
+  font-size: 22rpx;
+  color: var(--slate-400);
+  letter-spacing: 1rpx;
 }
 
 .price {
@@ -347,6 +377,7 @@ export default {
   color: var(--slate-600);
   line-height: 1.8;
 }
+
 
 /* ========== 底部栏 ========== */
 .bottom-bar {
@@ -467,6 +498,18 @@ export default {
 .btn-phone {
   background: var(--copper);
   color: #fff;
+}
+
+.bottom-bar-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding-left: 8rpx;
+}
+
+.bottom-bar-tip {
+  font-size: 24rpx;
+  color: var(--slate-400);
 }
 
 .btn-qr {

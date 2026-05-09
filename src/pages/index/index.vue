@@ -130,9 +130,7 @@
             <view class="product-name">{{ p.name }}</view>
             <view class="product-spec">{{ p.spec }}</view>
             <view class="product-bottom">
-              <!-- #ifndef MP-WEIXIN -->
               <text class="product-price">{{ p.price }}</text>
-              <!-- #endif -->
               <text class="product-brand-tag">{{ p.brand }}</text>
             </view>
           </view>
@@ -182,7 +180,7 @@ export default {
   data() {
     return {
       keyword: '',
-      brands: config.brands,
+      brands: config.brands.filter(b => b.name !== '通用'),
       hotProducts: [],
       advantages: [
         { title: '原厂品质', desc: '全部配件经过严格质检' },
@@ -192,7 +190,7 @@ export default {
       ]
     }
   },
-  async onLoad() {
+  async onShow() {
     const products = await fetchProducts()
     this.hotProducts = products.filter(p => p.hot)
   },

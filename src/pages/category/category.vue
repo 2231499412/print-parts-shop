@@ -54,7 +54,11 @@
           <text class="list-count">共 {{ filteredProducts.length }} 件产品</text>
         </view>
 
-        <view v-if="filteredProducts.length === 0" class="empty">
+        <view v-if="loading && allProducts.length === 0" class="empty">
+          <text class="empty-text">加载中...</text>
+        </view>
+
+        <view v-else-if="filteredProducts.length === 0" class="empty">
           <view class="empty-icon">
             <view class="empty-box">
               <view class="empty-box-lid"></view>
@@ -87,9 +91,7 @@
             </view>
             <view class="product-spec">{{ p.spec }}</view>
             <view class="product-bottom">
-              <!-- #ifndef MP-WEIXIN -->
-              <text class="product-price">{{ p.price }}</text>
-              <!-- #endif -->
+              <text class="product-price">{{ formatPrice(p.price) }}</text>
               <view class="product-detail-btn">
                 <text>查看详情</text>
                 <view class="arrow-right small">
@@ -116,7 +118,8 @@ export default {
       keyword: '',
       activeBrand: '全部',
       brands: config.brands,
-      allProducts: []
+      allProducts: [],
+      loading: true
     }
   },
   computed: {
@@ -139,10 +142,8 @@ export default {
   async onLoad(options) {
     if (options.brand) this.activeBrand = options.brand
     if (options.keyword) this.keyword = options.keyword
-    this.allProducts = await fetchProducts()
   },
-  onShow() {
-    // 从全局数据读取重定向参数
+  async onShow() {
     const app = getApp()
     if (app.globalData) {
       if (app.globalData.redirectBrand) {
@@ -156,12 +157,22 @@ export default {
         app.globalData.redirectKeyword = null
       }
     }
+    this.loading = true
+    this.allProducts = await fetchProducts()
+    this.loading = false
   },
   methods: {
     selectBrand(name) {
       this.activeBrand = name
     },
     doSearch() {},
+    formatPrice(price) {
+      if (price === undefined || price === null) return '面议'
+      const str = String(price).trim()
+      if (str === '' || str === '面议') return '面议'
+      if (/^\d+(\.\d+)?$/.test(str)) return str + '元'
+      return str
+    },
     goProduct(id) {
       uni.navigateTo({ url: `/pages/product/product?id=${id}` })
     },
@@ -332,6 +343,7 @@ export default {
 .brand-indicator.heidelberg { background: var(--copper); }
 .brand-indicator.komori { background: #3D7A5A; }
 .brand-indicator.roland { background: #4A6FA5; }
+.brand-indicator.universal { background: #8B90A0; }
 
 /* ========== 右侧产品 ========== */
 .product-list {
@@ -396,6 +408,7 @@ export default {
 
 .product-item {
   display: flex;
+  align-items: center;
   background: var(--surface-raised);
   border-radius: 14rpx;
   overflow: hidden;
@@ -459,55 +472,36 @@ export default {
   padding: 22rpx;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 14rpx;
+  min-width: 0;
 }
 
 .product-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: none;
 }
 
 .product-name {
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 700;
   color: var(--slate-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .product-tags {
-  display: flex;
-  gap: 8rpx;
-}
-
-.tag-brand {
-  font-size: 18rpx;
-  color: var(--copper);
-  background: rgba(184,115,51,0.08);
-  border: 1rpx solid rgba(184,115,51,0.15);
-  padding: 4rpx 12rpx;
-  border-radius: 6rpx;
-}
-
-.tag-cat {
-  font-size: 18rpx;
-  color: var(--slate-400);
-  background: var(--slate-50);
-  border: 1rpx solid var(--slate-100);
-  padding: 4rpx 12rpx;
-  border-radius: 6rpx;
+  display: none;
 }
 
 .product-spec {
-  font-size: 22rpx;
-  color: var(--slate-400);
-  margin-top: 10rpx;
+  display: none;
 }
 
 .product-bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 14rpx;
 }
 
 .product-price {
@@ -574,6 +568,51 @@ export default {
 
   .product-item {
     border-radius: 18rpx;
+  }
+
+  .product-info {
+    justify-content: space-between;
+  }
+
+  .product-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .product-name {
+    white-space: normal;
+    font-size: 30rpx;
+  }
+
+  .product-tags {
+    display: flex;
+    gap: 8rpx;
+  }
+
+  .product-spec {
+    display: block;
+    font-size: 22rpx;
+    color: var(--slate-400);
+    margin-top: 10rpx;
+  }
+
+  .tag-brand {
+    font-size: 18rpx;
+    color: var(--copper);
+    background: rgba(184,115,51,0.08);
+    border: 1rpx solid rgba(184,115,51,0.15);
+    padding: 4rpx 12rpx;
+    border-radius: 6rpx;
+  }
+
+  .tag-cat {
+    font-size: 18rpx;
+    color: var(--slate-400);
+    background: var(--slate-50);
+    border: 1rpx solid var(--slate-100);
+    padding: 4rpx 12rpx;
+    border-radius: 6rpx;
   }
 }
 </style>

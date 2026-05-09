@@ -23,6 +23,12 @@
       "name": "罗兰",
       "desc": "曼罗兰，印刷之王",
       "image": "/static/products/roland.jpeg"
+    },
+    {
+      "id": "universal",
+      "name": "通用",
+      "desc": "多品牌通用配件",
+      "image": ""
     }
   ]
 }

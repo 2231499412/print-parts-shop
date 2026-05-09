@@ -17,14 +17,14 @@ export async function onRequest(context) {
     switch (request.method) {
       case 'GET': {
         if (id) {
-          const row = await env.DB.prepare('SELECT * FROM products WHERE id = ?').bind(id).first();
+          const row = await env.DB.prepare('SELECT id, name, brand, category, image, image_data, price, spec, desc, hot, created_at, updated_at FROM products WHERE id = ?').bind(id).first();
           if (!row) {
             return jsonResponse({ error: '产品不存在' }, 404, corsHeaders);
           }
           row.hot = !!row.hot;
           return jsonResponse(row, 200, corsHeaders);
         }
-        const { results } = await env.DB.prepare('SELECT * FROM products ORDER BY id DESC').all();
+        const { results } = await env.DB.prepare('SELECT id, name, brand, category, image, image_data, price, spec, desc, hot, created_at, updated_at FROM products ORDER BY id DESC').all();
         results.forEach(r => r.hot = !!r.hot);
         return jsonResponse(results, 200, corsHeaders);
       }

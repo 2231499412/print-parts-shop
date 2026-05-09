@@ -33,6 +33,7 @@ function normalizeProduct(p) {
   } else if (p.image && p.image.startsWith('/') && IS_MP) {
     p.image = API_BASE + p.image
   }
+  delete p.image_data
   return p
 }
 

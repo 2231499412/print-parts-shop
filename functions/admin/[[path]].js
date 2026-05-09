@@ -138,6 +138,7 @@ tr:hover { background: #fafaf8; }
             <option value="海德堡">海德堡</option>
             <option value="小森">小森</option>
             <option value="罗兰">罗兰</option>
+            <option value="通用">通用</option>
           </select>
         </div>
         <div class="form-group">
@@ -231,10 +232,34 @@ function onFileChange(e) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function(ev) {
-    currentImageData = ev.target.result;
-    showPreview(currentImageData, file.size);
+    compressImage(ev.target.result, function(result, size) {
+      currentImageData = result;
+      showPreview(result, size);
+    });
   };
   reader.readAsDataURL(file);
+}
+
+function compressImage(src, callback) {
+  var img = new Image();
+  img.onload = function() {
+    var maxW = 1200, maxH = 1200;
+    var w = img.width, h = img.height;
+    if (w > maxW || h > maxH) {
+      var ratio = Math.min(maxW / w, maxH / h);
+      w = Math.round(w * ratio);
+      h = Math.round(h * ratio);
+    }
+    var canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    var result = canvas.toDataURL('image/jpeg', 0.8);
+    var size = Math.round((result.length - 'data:image/jpeg;base64,'.length) * 3 / 4);
+    callback(result, size);
+  };
+  img.src = src;
 }
 
 function showPreview(src, size) {

@@ -54,14 +54,18 @@
         "setting" : {
             "urlCheck" : false,
             "es6": true,
-            "postcss": false,
-            "minified": false,
+            "postcss": true,
+            "minified": true,
+            "wxml": true,
+            "uglifyFileName": true,
             "newFeature": true
         },
+        "libVersion" : "3.7.9",
         "usingComponents" : true,
         "optimization" : {
             "subPackages" : false
-        }
+        },
+        "lazyCodeLoading": "requiredComponents"
     },
     "mp-alipay" : {
         "usingComponents" : true
