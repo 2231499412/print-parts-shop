@@ -5,7 +5,6 @@
       <view class="back-btn" @tap="goHome">
         <view class="back-arrow"></view>
       </view>
-      <!-- 手机端搜索：带搜索按钮 -->
       <view class="search-wrap search-wrap-mobile">
         <view class="search-icon">
           <view class="search-icon-circle"></view>
@@ -27,7 +26,6 @@
           <text>搜索</text>
         </view>
       </view>
-      <!-- PC 端搜索：紧凑样式 -->
       <view class="search-wrap search-wrap-pc">
         <view class="search-icon">
           <view class="search-icon-circle"></view>
@@ -93,11 +91,13 @@
           <text class="list-count">共 {{ filteredProducts.length }} 件产品</text>
         </view>
 
+        <!-- 加载中 -->
         <view v-if="loading && allProducts.length === 0" class="empty">
           <text class="empty-text">加载中...</text>
         </view>
 
-        <view v-else-if="filteredProducts.length === 0" class="empty">
+        <!-- 空状态 -->
+        <view v-if="!loading && filteredProducts.length === 0" class="empty">
           <view class="empty-icon">
             <view class="empty-box">
               <view class="empty-box-lid"></view>
@@ -108,7 +108,7 @@
         </view>
 
         <!-- 手机端：网格卡片 -->
-        <view class="product-grid" v-else>
+        <view class="product-grid" v-if="filteredProducts.length > 0">
           <view
             class="product-card"
             v-for="p in filteredProducts"
@@ -254,7 +254,6 @@ export default {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
 }
 
 /* ========== 搜索栏 ========== */
@@ -412,9 +411,9 @@ export default {
 
 /* ========== 主体 ========== */
 .main {
-  display: flex;
   flex: 1;
-  height: 0;
+  display: flex;
+  overflow: hidden;
 }
 
 /* ========== PC 端左侧品牌 ========== */
@@ -425,7 +424,6 @@ export default {
 /* ========== 产品区域 ========== */
 .product-area {
   flex: 1;
-  height: 0;
   padding-bottom: 40rpx;
 }
 
@@ -627,10 +625,6 @@ export default {
 
   .brand-tabs {
     display: none;
-  }
-
-  .main {
-    height: 0;
   }
 
   .brand-list {
