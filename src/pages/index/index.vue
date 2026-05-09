@@ -118,7 +118,7 @@
           @tap="goProduct(p.id)"
         >
           <view class="product-img">
-            <image v-if="p.image" class="product-img-real" :src="p.image" mode="aspectFill" />
+            <image v-if="p.image" class="product-img-real" :src="p.image" mode="aspectFill" lazy-load />
             <view class="product-img-deco" v-if="!p.image">
               <view class="deco-circle"></view>
               <view class="deco-cross"></view>

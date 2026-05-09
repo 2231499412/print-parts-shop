@@ -37,16 +37,33 @@ function normalizeProduct(p) {
   return p
 }
 
+// 产品列表缓存（5 分钟有效）
+let productsCache = null
+let productsCacheTime = 0
+const CACHE_TTL = 5 * 60 * 1000
+
 export async function fetchProducts() {
+  const now = Date.now()
+  if (productsCache && now - productsCacheTime < CACHE_TTL) {
+    return productsCache
+  }
   try {
     const data = await request('/products')
     if (Array.isArray(data) && data.length > 0) {
-      return data.map(normalizeProduct)
+      const result = data.map(normalizeProduct)
+      productsCache = result
+      productsCacheTime = now
+      return result
     }
     return staticProducts
   } catch {
     return staticProducts
   }
+}
+
+export function clearProductsCache() {
+  productsCache = null
+  productsCacheTime = 0
 }
 
 export async function fetchProduct(id) {
