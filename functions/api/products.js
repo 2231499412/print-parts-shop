@@ -17,33 +17,38 @@ export async function onRequest(context) {
     switch (request.method) {
       case 'GET': {
         if (id) {
-          const row = await env.DB.prepare('SELECT id, name, brand, category, image, image_data, price, spec, desc, hot, created_at, updated_at FROM products WHERE id = ?').bind(id).first();
+          const row = await env.DB.prepare('SELECT * FROM products WHERE id = ?').bind(id).first();
           if (!row) {
             return jsonResponse({ error: '产品不存在' }, 404, corsHeaders);
           }
           row.hot = !!row.hot;
+          row.variants = parseVariants(row.variants);
           return jsonResponse(row, 200, corsHeaders);
         }
-        const { results } = await env.DB.prepare('SELECT id, name, brand, category, image, image_data, price, spec, desc, hot, created_at, updated_at FROM products ORDER BY id DESC').all();
-        results.forEach(r => r.hot = !!r.hot);
+        const { results } = await env.DB.prepare('SELECT * FROM products ORDER BY id DESC').all();
+        results.forEach(r => {
+          r.hot = !!r.hot;
+          r.variants = parseVariants(r.variants);
+        });
         return jsonResponse(results, 200, corsHeaders);
       }
 
       case 'POST': {
         const body = await request.json();
-        const { name, brand, category, image, image_data, price, spec, desc, hot } = body;
+        const { name, brand, category, image, image_data, price, spec, desc, hot, variants } = body;
         if (!name) {
           return jsonResponse({ error: '产品名称不能为空' }, 400, corsHeaders);
         }
+        const variantsStr = JSON.stringify(variants || []);
         const result = await env.DB.prepare(
-          'INSERT INTO products (name, brand, category, image, image_data, price, spec, desc, hot) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-        ).bind(name, brand || '', category || '', image || '', image_data || '', price || '面议', spec || '', desc || '', hot ? 1 : 0).run();
-        return jsonResponse({ id: result.meta.last_row_id, ...body, hot: !!hot }, 201, corsHeaders);
+          'INSERT INTO products (name, brand, category, image, image_data, price, spec, desc, hot, variants) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ).bind(name, brand || '', category || '', image || '', image_data || '', price || '面议', spec || '', desc || '', hot ? 1 : 0, variantsStr).run();
+        return jsonResponse({ id: result.meta.last_row_id, ...body, hot: !!hot, variants: variants || [] }, 201, corsHeaders);
       }
 
       case 'PUT': {
         const body = await request.json();
-        const { id: bodyId, name, brand, category, image, image_data, price, spec, desc, hot } = body;
+        const { id: bodyId, name, brand, category, image, image_data, price, spec, desc, hot, variants } = body;
         const targetId = bodyId || id;
         if (!targetId) {
           return jsonResponse({ error: '缺少产品ID' }, 400, corsHeaders);
@@ -51,10 +56,11 @@ export async function onRequest(context) {
         if (!name) {
           return jsonResponse({ error: '产品名称不能为空' }, 400, corsHeaders);
         }
+        const variantsStr = JSON.stringify(variants || []);
         await env.DB.prepare(
-          "UPDATE products SET name=?, brand=?, category=?, image=?, image_data=?, price=?, spec=?, desc=?, hot=?, updated_at=datetime('now', '+8 hours') WHERE id=?"
-        ).bind(name, brand || '', category || '', image || '', image_data || '', price || '面议', spec || '', desc || '', hot ? 1 : 0, targetId).run();
-        return jsonResponse({ id: parseInt(targetId), ...body, hot: !!hot }, 200, corsHeaders);
+          "UPDATE products SET name=?, brand=?, category=?, image=?, image_data=?, price=?, spec=?, desc=?, hot=?, variants=?, updated_at=datetime('now', '+8 hours') WHERE id=?"
+        ).bind(name, brand || '', category || '', image || '', image_data || '', price || '面议', spec || '', desc || '', hot ? 1 : 0, variantsStr, targetId).run();
+        return jsonResponse({ id: parseInt(targetId), ...body, hot: !!hot, variants: variants || [] }, 200, corsHeaders);
       }
 
       case 'DELETE': {
@@ -72,6 +78,14 @@ export async function onRequest(context) {
   } catch (err) {
     return jsonResponse({ error: err.message }, 500, corsHeaders);
   }
+}
+
+function parseVariants(v) {
+  if (Array.isArray(v)) return v;
+  if (typeof v === 'string' && v) {
+    try { return JSON.parse(v); } catch { return []; }
+  }
+  return [];
 }
 
 function jsonResponse(data, status, corsHeaders) {

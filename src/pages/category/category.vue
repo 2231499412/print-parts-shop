@@ -127,7 +127,7 @@
               <view class="product-name">{{ p.name }}</view>
               <view class="product-spec">{{ p.spec }}</view>
               <view class="product-bottom">
-                <text class="product-price">{{ formatPrice(p.price) }}</text>
+                <text class="product-price">{{ getMinPrice(p) }}</text>
                 <text class="product-brand-tag">{{ p.brand }}</text>
               </view>
             </view>
@@ -159,7 +159,7 @@
               </view>
               <view class="product-item-spec">{{ p.spec }}</view>
               <view class="product-item-bottom">
-                <text class="product-item-price">{{ formatPrice(p.price) }}</text>
+                <text class="product-item-price">{{ getMinPrice(p) }}</text>
                 <view class="product-detail-btn">
                   <text>查看详情</text>
                   <view class="arrow-right small">
@@ -177,7 +177,7 @@
 </template>
 
 <script>
-import { fetchProducts, getConfig } from '@/utils/api'
+import { fetchProducts, getConfig, getMinPrice } from '@/utils/api'
 
 const config = getConfig()
 
@@ -235,12 +235,8 @@ export default {
       this.activeBrand = name
     },
     doSearch() {},
-    formatPrice(price) {
-      if (price === undefined || price === null) return '面议'
-      const str = String(price).trim()
-      if (str === '' || str === '面议') return '面议'
-      if (/^\d+(\.\d+)?$/.test(str)) return str + '元'
-      return str
+    getMinPrice(product) {
+      return getMinPrice(product)
     },
     goProduct(id) {
       uni.navigateTo({ url: `/pages/product/product?id=${id}` })

@@ -64,9 +64,16 @@ tr:hover { background: #fafaf8; }
 .upload-actions { position: absolute; top: 6px; right: 6px; display: flex; gap: 4px; }
 .upload-actions button { background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 4px; padding: 2px 8px; font-size: 12px; cursor: pointer; }
 .upload-size { font-size: 11px; color: #999; margin-top: 4px; }
+.variants-section { border: 1px solid #eee; border-radius: 8px; padding: 12px; background: #fafaf8; }
+.variants-section label { font-size: 13px; font-weight: 500; color: #333; margin-bottom: 8px; display: block; }
+.variant-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+.variant-row input { flex: 1; padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+.variant-row .btn-remove { background: none; border: none; color: #C44B4B; cursor: pointer; font-size: 18px; padding: 4px 8px; }
+.variant-add { font-size: 13px; color: #B87333; cursor: pointer; border: 1px dashed #B87333; border-radius: 6px; padding: 6px 12px; background: none; width: 100%; }
+.variant-add:hover { background: rgba(184,115,51,0.05); }
 @media (max-width: 640px) {
   .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { min-width: 700px; }
+  table { min-width: 800px; }
   .container { padding: 12px; }
   .toolbar { flex-wrap: wrap; gap: 8px; }
   .form-row { grid-template-columns: 1fr; }
@@ -92,6 +99,7 @@ tr:hover { background: #fafaf8; }
           <th>品牌</th>
           <th>分类</th>
           <th>规格</th>
+          <th>型号</th>
           <th>价格</th>
           <th>热门</th>
           <th>操作</th>
@@ -148,13 +156,18 @@ tr:hover { background: #fafaf8; }
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>价格</label>
+          <label>默认价格</label>
           <input type="text" id="f_price" placeholder="面议" value="面议">
         </div>
         <div class="form-group">
           <label>规格</label>
           <input type="text" id="f_spec" placeholder="如：直径80mm，适用SM系列">
         </div>
+      </div>
+      <div class="variants-section">
+        <label>型号/价格（可选，添加后详情页显示型号选择器，列表页显示起步价）</label>
+        <div id="variantsList"></div>
+        <button class="variant-add" onclick="addVariantRow()">+ 添加型号</button>
       </div>
       <div class="form-group">
         <label>产品描述</label>
@@ -179,6 +192,45 @@ tr:hover { background: #fafaf8; }
 const API = '/api/products';
 let products = [];
 let currentImageData = '';
+let currentVariants = [];
+
+function formatVariantsShort(variants) {
+  if (!variants || !Array.isArray(variants) || variants.length === 0) return '-';
+  return variants.map(v => esc(v.name)).join('、');
+}
+
+function formatPriceDisplay(p) {
+  const variants = p.variants && Array.isArray(p.variants) ? p.variants : [];
+  if (variants.length > 0) {
+    const prices = variants.map(v => parseFloat(v.price)).filter(n => !isNaN(n));
+    if (prices.length > 0) {
+      const min = Math.min(...prices);
+      return '<span style="color:#B87333">' + min + '元起</span>';
+    }
+  }
+  return esc(p.price);
+}
+
+function renderVariantsEditor() {
+  const container = document.getElementById('variantsList');
+  container.innerHTML = currentVariants.map((v, i) =>
+    '<div class="variant-row">' +
+      '<input type="text" placeholder="型号名 如 SM74" value="' + esc(v.name) + '" onchange="currentVariants[' + i + '].name=this.value">' +
+      '<input type="text" placeholder="价格" value="' + esc(v.price) + '" onchange="currentVariants[' + i + '].price=this.value">' +
+      '<button class="btn-remove" onclick="removeVariantRow(' + i + ')">&times;</button>' +
+    '</div>'
+  ).join('');
+}
+
+function addVariantRow() {
+  currentVariants.push({ name: '', price: '' });
+  renderVariantsEditor();
+}
+
+function removeVariantRow(i) {
+  currentVariants.splice(i, 1);
+  renderVariantsEditor();
+}
 
 function getProductImage(p) {
   if (p.image_data && p.image_data.startsWith('data:')) return p.image_data;
@@ -215,7 +267,8 @@ function render() {
       '<td><span class="tag tag-brand">' + esc(p.brand) + '</span></td>' +
       '<td><span class="tag tag-category">' + esc(p.category) + '</span></td>' +
       '<td style="font-size:12px;color:#666">' + esc(p.spec) + '</td>' +
-      '<td>' + esc(p.price) + '</td>' +
+      '<td style="font-size:12px">' + formatVariantsShort(p.variants) + '</td>' +
+      '<td>' + formatPriceDisplay(p) + '</td>' +
       '<td>' + (p.hot ? '<span class="tag tag-hot">热门</span>' : '-') + '</td>' +
       '<td class="actions">' +
         '<button class="btn btn-ghost btn-sm" onclick="openEdit(' + p.id + ')">编辑</button>' +
@@ -297,6 +350,8 @@ function openAdd() {
   document.getElementById('f_desc').value = '';
   document.getElementById('f_hot').checked = false;
   removeImage();
+  currentVariants = [];
+  renderVariantsEditor();
   document.getElementById('modal').classList.add('active');
 }
 
@@ -312,6 +367,8 @@ function openEdit(id) {
   document.getElementById('f_spec').value = p.spec;
   document.getElementById('f_desc').value = p.desc;
   document.getElementById('f_hot').checked = p.hot;
+  currentVariants = p.variants && Array.isArray(p.variants) ? JSON.parse(JSON.stringify(p.variants)) : [];
+  renderVariantsEditor();
   removeImage();
   const imgSrc = getProductImage(p);
   if (imgSrc) {
@@ -328,6 +385,7 @@ function closeModal() {
 
 async function saveProduct() {
   const id = document.getElementById('f_id').value;
+  const validVariants = currentVariants.filter(v => v.name.trim() && v.price.trim());
   const data = {
     name: document.getElementById('f_name').value.trim(),
     brand: document.getElementById('f_brand').value,
@@ -338,6 +396,7 @@ async function saveProduct() {
     spec: document.getElementById('f_spec').value.trim(),
     desc: document.getElementById('f_desc').value.trim(),
     hot: document.getElementById('f_hot').checked,
+    variants: validVariants,
   };
   if (!data.name) { toast('请输入产品名称'); return; }
   try {

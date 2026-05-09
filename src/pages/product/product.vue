@@ -18,7 +18,23 @@
     <view class="info-card">
       <view class="name">{{ product.name }}</view>
       <view class="price-row">
-        <text class="price">{{ formatPrice(product.price) }}</text>
+        <text class="price">{{ displayPrice }}</text>
+      </view>
+      <!-- 型号选择器 -->
+      <view class="variant-picker" v-if="hasVariants">
+        <text class="variant-label">型号</text>
+        <view class="variant-options">
+          <view
+            class="variant-tag"
+            :class="{ active: selectedVariant === v }"
+            v-for="v in product.variants"
+            :key="v.name"
+            @tap="selectVariant(v)"
+          >
+            <text>{{ v.name }}</text>
+            <text class="variant-price">{{ formatPrice(v.price) }}</text>
+          </view>
+        </view>
       </view>
       <view class="meta">
         <text class="tag tag-brand">{{ product.brand }}</text>
@@ -94,7 +110,7 @@
 </template>
 
 <script>
-import { fetchProduct, getConfig } from '@/utils/api'
+import { fetchProduct, getConfig, formatPrice } from '@/utils/api'
 
 const config = getConfig()
 
@@ -102,13 +118,28 @@ export default {
   data() {
     return {
       product: null,
-      specList: []
+      specList: [],
+      selectedVariant: null
+    }
+  },
+  computed: {
+    displayPrice() {
+      if (this.selectedVariant) {
+        return formatPrice(this.selectedVariant.price)
+      }
+      return this.product ? formatPrice(this.product.price) : '面议'
+    },
+    hasVariants() {
+      return this.product && this.product.variants && this.product.variants.length > 0
     }
   },
   async onLoad(options) {
     const id = parseInt(options.id)
     this.product = await fetchProduct(id)
     if (this.product) {
+      if (this.product.variants && this.product.variants.length > 0) {
+        this.selectedVariant = this.product.variants[0]
+      }
       this.specList = [
         { label: '产品名称', value: this.product.name },
         { label: '规格', value: this.product.spec },
@@ -118,17 +149,16 @@ export default {
     }
   },
   methods: {
+    selectVariant(v) {
+      this.selectedVariant = v
+    },
     previewImage() {
       if (this.product && this.product.image) {
         uni.previewImage({ urls: [this.product.image] })
       }
     },
     formatPrice(price) {
-      if (price === undefined || price === null) return '面议'
-      const str = String(price).trim()
-      if (str === '' || str === '面议') return '面议'
-      if (/^\d+(\.\d+)?$/.test(str)) return str + '元'
-      return str
+      return formatPrice(price)
     },
     copyWechat() {
       uni.setClipboardData({
@@ -280,6 +310,49 @@ export default {
   display: flex;
   gap: 14rpx;
   margin-top: 20rpx;
+}
+
+.variant-picker {
+  margin-top: 20rpx;
+}
+
+.variant-label {
+  font-size: 22rpx;
+  color: var(--slate-400);
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.variant-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.variant-tag {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 20rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: var(--slate-600);
+  background: var(--slate-50);
+  border: 2rpx solid var(--slate-100);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.variant-tag.active {
+  color: var(--copper);
+  border-color: var(--copper);
+  background: rgba(184,115,51,0.06);
+}
+
+.variant-price {
+  font-size: 22rpx;
+  color: var(--copper);
+  font-weight: 600;
 }
 
 .tag {

@@ -130,7 +130,7 @@
             <view class="product-name">{{ p.name }}</view>
             <view class="product-spec">{{ p.spec }}</view>
             <view class="product-bottom">
-              <text class="product-price">{{ p.price }}</text>
+              <text class="product-price">{{ getMinPrice(p) }}</text>
               <text class="product-brand-tag">{{ p.brand }}</text>
             </view>
           </view>
@@ -172,7 +172,7 @@
 </template>
 
 <script>
-import { fetchProducts, fetchProduct, getConfig } from '@/utils/api'
+import { fetchProducts, fetchProduct, getConfig, getMinPrice } from '@/utils/api'
 
 const config = getConfig()
 
@@ -197,6 +197,9 @@ export default {
     this.hotProducts.forEach(p => fetchProduct(p.id).catch(() => {}))
   },
   methods: {
+    getMinPrice(product) {
+      return getMinPrice(product)
+    },
     goSearch() {
       if (this.keyword.trim()) {
         uni.redirectTo({ url: `/pages/redirect/redirect?keyword=${this.keyword}` })

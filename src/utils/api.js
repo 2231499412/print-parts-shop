@@ -34,7 +34,28 @@ function normalizeProduct(p) {
     p.image = API_BASE + p.image
   }
   delete p.image_data
+  if (typeof p.variants === 'string') {
+    try { p.variants = JSON.parse(p.variants) } catch { p.variants = [] }
+  }
+  if (!Array.isArray(p.variants)) p.variants = []
   return p
+}
+
+export function getMinPrice(product) {
+  const variants = product.variants || []
+  if (variants.length > 0) {
+    const prices = variants.map(v => parseFloat(v.price)).filter(n => !isNaN(n))
+    if (prices.length > 0) return Math.min(...prices) + '元起'
+  }
+  return formatPrice(product.price)
+}
+
+export function formatPrice(price) {
+  if (price === undefined || price === null) return '面议'
+  const str = String(price).trim()
+  if (str === '' || str === '面议') return '面议'
+  if (/^\d+(\.\d+)?$/.test(str)) return str + '元'
+  return str
 }
 
 // 产品列表缓存（5 分钟有效）
