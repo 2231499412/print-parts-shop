@@ -172,7 +172,7 @@
 </template>
 
 <script>
-import { fetchProducts, getConfig } from '@/utils/api'
+import { fetchProducts, fetchProduct, getConfig } from '@/utils/api'
 
 const config = getConfig()
 
@@ -193,6 +193,8 @@ export default {
   async onShow() {
     const products = await fetchProducts()
     this.hotProducts = products.filter(p => p.hot)
+    // 后台预加载热门产品详情，不阻塞渲染
+    this.hotProducts.forEach(p => fetchProduct(p.id).catch(() => {}))
   },
   methods: {
     goSearch() {

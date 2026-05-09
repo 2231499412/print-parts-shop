@@ -64,13 +64,23 @@ export async function fetchProducts() {
 export function clearProductsCache() {
   productsCache = null
   productsCacheTime = 0
+  productDetailCache.clear()
 }
 
+// 单品详情缓存
+const productDetailCache = new Map()
+
 export async function fetchProduct(id) {
+  const cached = productDetailCache.get(id)
+  if (cached && Date.now() - cached.time < CACHE_TTL) {
+    return cached.data
+  }
   try {
     const data = await request(`/products?id=${id}`)
     if (data && data.id) {
-      return normalizeProduct(data)
+      const result = normalizeProduct(data)
+      productDetailCache.set(id, { data: result, time: Date.now() })
+      return result
     }
     return staticProducts.find(p => p.id === id) || null
   } catch {
