@@ -113,22 +113,23 @@
             class="product-card"
             v-for="p in filteredProducts"
             :key="p.id"
-            @tap="goProduct(p.id)"
           >
-            <view class="product-img">
-              <image v-if="p.image" class="product-img-real" :src="p.image" mode="aspectFill" lazy-load />
-              <view class="product-img-deco" v-if="!p.image">
-                <view class="deco-circle"></view>
+            <view class="product-card-inner" @tap="goProduct(p.id)">
+              <view class="product-img">
+                <image v-if="p.image" class="product-img-real" :src="p.image" mode="aspectFill" lazy-load />
+                <view class="product-img-deco" v-if="!p.image">
+                  <view class="deco-circle"></view>
+                </view>
+                <text class="product-img-char" v-if="!p.image">{{ p.name[0] }}</text>
+                <view class="product-tag">{{ p.category }}</view>
               </view>
-              <text class="product-img-char" v-if="!p.image">{{ p.name[0] }}</text>
-              <view class="product-tag">{{ p.category }}</view>
-            </view>
-            <view class="product-info">
-              <view class="product-name">{{ p.name }}</view>
-              <view class="product-spec">{{ p.spec }}</view>
-              <view class="product-bottom">
-                <text class="product-price">{{ getMinPrice(p) }}</text>
-                <text class="product-brand-tag">{{ p.brand }}</text>
+              <view class="product-info">
+                <view class="product-name">{{ p.name }}</view>
+                <view class="product-spec">{{ p.spec }}</view>
+                <view class="product-bottom">
+                  <text class="product-price">{{ getMinPrice(p) }}</text>
+                  <text class="product-brand-tag">{{ p.brand }}</text>
+                </view>
               </view>
             </view>
           </view>
@@ -442,12 +443,17 @@ export default {
 .product-grid {
   display: flex;
   flex-wrap: wrap;
-  padding: 0 20rpx;
-  gap: 16rpx;
+  padding: 0 12rpx;
 }
 
 .product-card {
-  width: calc(50% - 8rpx);
+  width: 50%;
+  padding: 0 8rpx;
+  margin-bottom: 16rpx;
+  box-sizing: border-box;
+}
+
+.product-card-inner {
   background: var(--surface-raised);
   border-radius: 16rpx;
   overflow: hidden;
@@ -457,7 +463,7 @@ export default {
   cursor: pointer;
 }
 
-.product-card:hover {
+.product-card-inner:hover {
   transform: translateY(-6rpx);
   box-shadow: 0 16rpx 48rpx rgba(0,0,0,0.1);
   border-color: var(--copper-glow);
