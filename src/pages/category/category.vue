@@ -5,7 +5,30 @@
       <view class="back-btn" @tap="goHome">
         <view class="back-arrow"></view>
       </view>
-      <view class="search-wrap">
+      <!-- 手机端搜索：带搜索按钮 -->
+      <view class="search-wrap search-wrap-mobile">
+        <view class="search-icon">
+          <view class="search-icon-circle"></view>
+          <view class="search-icon-line"></view>
+        </view>
+        <input
+          class="search-input"
+          placeholder="搜索产品名称"
+          v-model="keyword"
+          @confirm="doSearch"
+        />
+        <view class="search-clear" v-if="keyword" @tap="keyword = ''">
+          <view class="clear-x">
+            <view class="clear-line-1"></view>
+            <view class="clear-line-2"></view>
+          </view>
+        </view>
+        <view class="search-btn" @tap="doSearch">
+          <text>搜索</text>
+        </view>
+      </view>
+      <!-- PC 端搜索：紧凑样式 -->
+      <view class="search-wrap search-wrap-pc">
         <view class="search-icon">
           <view class="search-icon-circle"></view>
           <view class="search-icon-line"></view>
@@ -25,8 +48,24 @@
       </view>
     </view>
 
+    <!-- 手机端：顶部品牌标签 -->
+    <scroll-view class="brand-tabs" scroll-x :show-scrollbar="false">
+      <view
+        class="brand-tab"
+        :class="{ active: activeBrand === '全部' }"
+        @tap="selectBrand('全部')"
+      >全部</view>
+      <view
+        class="brand-tab"
+        :class="{ active: activeBrand === b.name }"
+        v-for="b in brands"
+        :key="b.id"
+        @tap="selectBrand(b.name)"
+      >{{ b.name }}</view>
+    </scroll-view>
+
     <view class="main">
-      <!-- 左侧品牌列表 -->
+      <!-- PC 端：左侧品牌列表 -->
       <scroll-view class="brand-list" scroll-y>
         <view
           class="brand-item"
@@ -48,8 +87,8 @@
         </view>
       </scroll-view>
 
-      <!-- 右侧产品列表 -->
-      <scroll-view class="product-list" scroll-y>
+      <!-- 产品区域 -->
+      <view class="product-area">
         <view class="list-header">
           <text class="list-count">共 {{ filteredProducts.length }} 件产品</text>
         </view>
@@ -68,41 +107,71 @@
           <text class="empty-hint">尝试更换关键词或品牌筛选</text>
         </view>
 
-        <view
-          class="product-item"
-          v-for="p in filteredProducts"
-          :key="p.id"
-          @tap="goProduct(p.id)"
-        >
-          <view class="product-img">
-            <image v-if="p.image" class="product-img-real" :src="p.image" mode="aspectFill" />
-            <view class="product-img-deco" v-if="!p.image">
-              <view class="deco-circle"></view>
+        <!-- 手机端：网格卡片 -->
+        <view class="product-grid" v-else>
+          <view
+            class="product-card"
+            v-for="p in filteredProducts"
+            :key="p.id"
+            @tap="goProduct(p.id)"
+          >
+            <view class="product-img">
+              <image v-if="p.image" class="product-img-real" :src="p.image" mode="aspectFill" />
+              <view class="product-img-deco" v-if="!p.image">
+                <view class="deco-circle"></view>
+              </view>
+              <text class="product-img-char" v-if="!p.image">{{ p.name[0] }}</text>
+              <view class="product-tag">{{ p.category }}</view>
             </view>
-            <text class="product-img-char" v-if="!p.image">{{ p.name[0] }}</text>
-          </view>
-          <view class="product-info">
-            <view class="product-top">
+            <view class="product-info">
               <view class="product-name">{{ p.name }}</view>
-              <view class="product-tags">
-                <text class="tag-brand">{{ p.brand }}</text>
-                <text class="tag-cat">{{ p.category }}</text>
+              <view class="product-spec">{{ p.spec }}</view>
+              <view class="product-bottom">
+                <text class="product-price">{{ formatPrice(p.price) }}</text>
+                <text class="product-brand-tag">{{ p.brand }}</text>
               </view>
             </view>
-            <view class="product-spec">{{ p.spec }}</view>
-            <view class="product-bottom">
-              <text class="product-price">{{ formatPrice(p.price) }}</text>
-              <view class="product-detail-btn">
-                <text>查看详情</text>
-                <view class="arrow-right small">
-                  <view class="arrow-line"></view>
-                  <view class="arrow-tip"></view>
+          </view>
+        </view>
+
+        <!-- PC 端：列表卡片 -->
+        <view class="product-list" v-if="filteredProducts.length > 0">
+          <view
+            class="product-item"
+            v-for="p in filteredProducts"
+            :key="'pc-' + p.id"
+            @tap="goProduct(p.id)"
+          >
+            <view class="product-item-img">
+              <image v-if="p.image" class="product-item-img-real" :src="p.image" mode="aspectFill" />
+              <view class="product-item-img-deco" v-if="!p.image">
+                <view class="deco-circle"></view>
+              </view>
+              <text class="product-item-img-char" v-if="!p.image">{{ p.name[0] }}</text>
+            </view>
+            <view class="product-item-info">
+              <view class="product-item-top">
+                <view class="product-item-name">{{ p.name }}</view>
+                <view class="product-item-tags">
+                  <text class="tag-brand">{{ p.brand }}</text>
+                  <text class="tag-cat">{{ p.category }}</text>
+                </view>
+              </view>
+              <view class="product-item-spec">{{ p.spec }}</view>
+              <view class="product-item-bottom">
+                <text class="product-item-price">{{ formatPrice(p.price) }}</text>
+                <view class="product-detail-btn">
+                  <text>查看详情</text>
+                  <view class="arrow-right small">
+                    <view class="arrow-line"></view>
+                    <view class="arrow-tip"></view>
+                  </view>
                 </view>
               </view>
             </view>
           </view>
         </view>
-      </scroll-view>
+      </view>
     </view>
   </view>
 </template>
@@ -187,8 +256,6 @@ export default {
 .page {
   background: var(--surface);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
 /* ========== 搜索栏 ========== */
@@ -224,9 +291,8 @@ export default {
   align-items: center;
   background: var(--slate-800);
   border: 1rpx solid var(--slate-700);
-  border-radius: 10rpx;
-  padding: 0 20rpx;
-  position: relative;
+  border-radius: 12rpx;
+  overflow: hidden;
   transition: border-color 0.3s ease;
 }
 
@@ -234,21 +300,30 @@ export default {
   border-color: var(--copper);
 }
 
+.search-wrap-mobile {
+  flex: 1;
+}
+
+.search-wrap-pc {
+  display: none;
+}
+
 .search-icon {
-  width: 36rpx;
-  height: 36rpx;
+  width: 44rpx;
+  height: 44rpx;
+  margin-left: 20rpx;
   position: relative;
   flex-shrink: 0;
 }
 
 .search-icon-circle {
-  width: 16rpx;
-  height: 16rpx;
+  width: 18rpx;
+  height: 18rpx;
   border: 2rpx solid var(--slate-400);
   border-radius: 50%;
   position: absolute;
-  top: 4rpx;
-  left: 4rpx;
+  top: 5rpx;
+  left: 5rpx;
 }
 
 .search-icon-line {
@@ -256,8 +331,8 @@ export default {
   height: 2rpx;
   background: var(--slate-400);
   position: absolute;
-  bottom: 8rpx;
-  right: 4rpx;
+  bottom: 9rpx;
+  right: 5rpx;
   transform: rotate(45deg);
 }
 
@@ -274,6 +349,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .clear-x {
@@ -294,64 +370,66 @@ export default {
 .clear-line-1 { transform: rotate(45deg); }
 .clear-line-2 { transform: rotate(-45deg); }
 
-/* ========== 主体 ========== */
-.main {
-  flex: 1;
-  display: flex;
-  height: 0;
-}
-
-/* ========== 左侧品牌 ========== */
-.brand-list {
-  width: 180rpx;
-  background: var(--surface-raised);
+.search-btn {
+  background: var(--copper);
+  color: #fff;
+  padding: 22rpx 32rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
   flex-shrink: 0;
-  border-right: 1rpx solid var(--slate-100);
+  transition: background 0.2s ease;
 }
 
-.brand-item {
-  display: flex;
-  align-items: center;
-  gap: 14rpx;
-  padding: 30rpx 22rpx;
-  font-size: 26rpx;
+.search-btn:active {
+  background: var(--copper-dark);
+}
+
+/* ========== 手机端品牌标签 ========== */
+.brand-tabs {
+  white-space: nowrap;
+  padding: 20rpx 28rpx 0;
+}
+
+.brand-tab {
+  display: inline-block;
+  padding: 12rpx 28rpx;
+  margin-right: 16rpx;
+  margin-bottom: 20rpx;
+  font-size: 24rpx;
   color: var(--slate-600);
-  border-left: 4rpx solid transparent;
+  background: var(--surface-raised);
+  border: 1rpx solid var(--slate-100);
+  border-radius: 32rpx;
   transition: all 0.25s ease;
 }
 
-.brand-item.active {
-  color: var(--copper);
+.brand-tab.active {
+  color: #fff;
+  background: var(--copper);
+  border-color: var(--copper);
   font-weight: 700;
-  background: var(--surface);
-  border-left-color: var(--copper);
 }
 
-.brand-indicator {
-  width: 14rpx;
-  height: 14rpx;
-  border-radius: 3rpx;
-  flex-shrink: 0;
-  transition: transform 0.25s ease;
-}
-
-.brand-item.active .brand-indicator {
-  transform: rotate(45deg);
-}
-
-.brand-indicator.all { background: var(--copper); }
-.brand-indicator.heidelberg { background: var(--copper); }
-.brand-indicator.komori { background: #3D7A5A; }
-.brand-indicator.roland { background: #4A6FA5; }
-.brand-indicator.universal { background: #8B90A0; }
-
-/* ========== 右侧产品 ========== */
-.product-list {
+/* ========== 主体 ========== */
+.main {
+  display: flex;
   flex: 1;
-  padding: 20rpx;
+}
+
+/* ========== PC 端左侧品牌 ========== */
+.brand-list {
+  display: none;
+}
+
+/* ========== 产品区域 ========== */
+.product-area {
+  flex: 1;
+  padding-bottom: 40rpx;
 }
 
 .list-header {
+  padding: 0 28rpx;
   margin-bottom: 16rpx;
 }
 
@@ -361,6 +439,135 @@ export default {
   letter-spacing: 1rpx;
 }
 
+/* ========== 手机端网格卡片 ========== */
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 20rpx;
+  gap: 16rpx;
+}
+
+.product-card {
+  width: calc(50% - 8rpx);
+  background: var(--surface-raised);
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.04);
+  border: 1rpx solid var(--slate-100);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.product-card:hover {
+  transform: translateY(-6rpx);
+  box-shadow: 0 16rpx 48rpx rgba(0,0,0,0.1);
+  border-color: var(--copper-glow);
+}
+
+.product-img {
+  height: 280rpx;
+  background: linear-gradient(145deg, var(--slate-100), var(--steel));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-img-deco {
+  position: absolute;
+  width: 160rpx;
+  height: 160rpx;
+  opacity: 0.06;
+}
+
+.deco-circle {
+  position: absolute;
+  inset: 0;
+  border: 3rpx solid var(--slate-900);
+  border-radius: 50%;
+}
+
+.product-img-char {
+  font-size: 72rpx;
+  color: var(--copper);
+  font-weight: 800;
+  opacity: 0.35;
+  z-index: 1;
+}
+
+.product-img-real {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.product-tag {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  font-size: 20rpx;
+  color: var(--copper);
+  background: rgba(184,115,51,0.1);
+  border: 1rpx solid rgba(184,115,51,0.2);
+  padding: 6rpx 16rpx;
+  border-radius: 6rpx;
+  font-weight: 500;
+  z-index: 2;
+}
+
+.product-info {
+  padding: 24rpx;
+}
+
+.product-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--slate-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-spec {
+  font-size: 22rpx;
+  color: var(--slate-400);
+  margin-top: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16rpx;
+}
+
+.product-price {
+  font-size: 28rpx;
+  color: var(--copper);
+  font-weight: 700;
+}
+
+.product-brand-tag {
+  font-size: 20rpx;
+  color: var(--slate-400);
+  background: var(--slate-50);
+  border: 1rpx solid var(--slate-100);
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+}
+
+/* ========== PC 端列表卡片（默认隐藏） ========== */
+.product-list {
+  display: none;
+}
+
+/* ========== 空状态 ========== */
 .empty {
   text-align: center;
   padding: 120rpx 0;
@@ -406,195 +613,158 @@ export default {
   display: block;
 }
 
-.product-item {
-  display: flex;
-  align-items: center;
-  background: var(--surface-raised);
-  border-radius: 14rpx;
-  overflow: hidden;
-  margin-bottom: 18rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.03);
-  border: 1rpx solid var(--slate-100);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
-
-.product-item:hover {
-  transform: translateX(6rpx);
-  box-shadow: 0 8rpx 28rpx rgba(0,0,0,0.06);
-  border-color: var(--copper-glow);
-}
-
-.product-img {
-  width: 200rpx;
-  height: 200rpx;
-  background: linear-gradient(145deg, var(--slate-100), var(--steel));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
-}
-
-.product-img-deco {
-  position: absolute;
-  width: 120rpx;
-  height: 120rpx;
-  opacity: 0.05;
-}
-
-.deco-circle {
-  position: absolute;
-  inset: 0;
-  border: 3rpx solid var(--slate-900);
-  border-radius: 50%;
-}
-
-.product-img-char {
-  font-size: 56rpx;
-  color: var(--copper);
-  font-weight: 800;
-  opacity: 0.35;
-  z-index: 1;
-}
-
-.product-img-real {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.product-info {
-  flex: 1;
-  padding: 22rpx;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 14rpx;
-  min-width: 0;
-}
-
-.product-top {
-  display: none;
-}
-
-.product-name {
-  font-size: 28rpx;
-  font-weight: 700;
-  color: var(--slate-900);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.product-tags {
-  display: none;
-}
-
-.product-spec {
-  display: none;
-}
-
-.product-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.product-price {
-  font-size: 28rpx;
-  color: var(--copper);
-  font-weight: 700;
-}
-
-.product-detail-btn {
-  display: flex;
-  align-items: center;
-  gap: 6rpx;
-  font-size: 22rpx;
-  color: var(--copper);
-  font-weight: 500;
-  opacity: 0;
-  transform: translateX(-10rpx);
-  transition: all 0.3s ease;
-}
-
-.product-item:hover .product-detail-btn {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.arrow-right {
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 28rpx;
-  height: 14rpx;
-}
-
-.arrow-right.small {
-  width: 20rpx;
-  height: 10rpx;
-}
-
-.arrow-line {
-  width: 100%;
-  height: 2rpx;
-  background: var(--copper);
-}
-
-.arrow-tip {
-  position: absolute;
-  right: 0;
-  width: 10rpx;
-  height: 10rpx;
-  border-top: 2rpx solid var(--copper);
-  border-right: 2rpx solid var(--copper);
-  transform: rotate(45deg);
-}
-
-/* ========== 响应式 ========== */
+/* ========== PC 端响应式 ========== */
 @media screen and (min-width: 768px) {
+  .search-wrap-mobile {
+    display: none;
+  }
+
+  .search-wrap-pc {
+    display: flex;
+    flex: 1;
+  }
+
+  .brand-tabs {
+    display: none;
+  }
+
+  .main {
+    height: calc(100vh - 100rpx);
+  }
+
   .brand-list {
+    display: block;
     width: 240rpx;
+    background: var(--surface-raised);
+    flex-shrink: 0;
+    border-right: 1rpx solid var(--slate-100);
+  }
+
+  .brand-item {
+    display: flex;
+    align-items: center;
+    gap: 14rpx;
+    padding: 30rpx 22rpx;
+    font-size: 26rpx;
+    color: var(--slate-600);
+    border-left: 4rpx solid transparent;
+    transition: all 0.25s ease;
+  }
+
+  .brand-item.active {
+    color: var(--copper);
+    font-weight: 700;
+    background: var(--surface);
+    border-left-color: var(--copper);
+  }
+
+  .brand-indicator {
+    width: 14rpx;
+    height: 14rpx;
+    border-radius: 3rpx;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+  }
+
+  .brand-item.active .brand-indicator {
+    transform: rotate(45deg);
+  }
+
+  .brand-indicator.all { background: var(--copper); }
+  .brand-indicator.heidelberg { background: var(--copper); }
+  .brand-indicator.komori { background: #3D7A5A; }
+  .brand-indicator.roland { background: #4A6FA5; }
+  .brand-indicator.universal { background: #8B90A0; }
+
+  .product-area {
+    overflow-y: auto;
+    padding: 20rpx 28rpx;
+  }
+
+  .product-grid {
+    display: none;
   }
 
   .product-list {
-    padding: 28rpx;
+    display: block;
   }
 
   .product-item {
-    border-radius: 18rpx;
+    display: flex;
+    background: var(--surface-raised);
+    border-radius: 14rpx;
+    overflow: hidden;
+    margin-bottom: 18rpx;
+    box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.03);
+    border: 1rpx solid var(--slate-100);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
   }
 
-  .product-info {
+  .product-item:hover {
+    transform: translateX(6rpx);
+    box-shadow: 0 8rpx 28rpx rgba(0,0,0,0.06);
+    border-color: var(--copper-glow);
+  }
+
+  .product-item-img {
+    width: 200rpx;
+    height: 200rpx;
+    background: linear-gradient(145deg, var(--slate-100), var(--steel));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-item-img-deco {
+    position: absolute;
+    width: 120rpx;
+    height: 120rpx;
+    opacity: 0.05;
+  }
+
+  .product-item-img-char {
+    font-size: 56rpx;
+    color: var(--copper);
+    font-weight: 800;
+    opacity: 0.35;
+    z-index: 1;
+  }
+
+  .product-item-img-real {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .product-item-info {
+    flex: 1;
+    padding: 22rpx;
+    display: flex;
+    flex-direction: column;
     justify-content: space-between;
   }
 
-  .product-top {
+  .product-item-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
   }
 
-  .product-name {
-    white-space: normal;
+  .product-item-name {
     font-size: 30rpx;
+    font-weight: 700;
+    color: var(--slate-900);
   }
 
-  .product-tags {
+  .product-item-tags {
     display: flex;
     gap: 8rpx;
-  }
-
-  .product-spec {
-    display: block;
-    font-size: 22rpx;
-    color: var(--slate-400);
-    margin-top: 10rpx;
   }
 
   .tag-brand {
@@ -613,6 +783,71 @@ export default {
     border: 1rpx solid var(--slate-100);
     padding: 4rpx 12rpx;
     border-radius: 6rpx;
+  }
+
+  .product-item-spec {
+    font-size: 22rpx;
+    color: var(--slate-400);
+    margin-top: 10rpx;
+  }
+
+  .product-item-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14rpx;
+  }
+
+  .product-item-price {
+    font-size: 28rpx;
+    color: var(--copper);
+    font-weight: 700;
+  }
+
+  .product-detail-btn {
+    display: flex;
+    align-items: center;
+    gap: 6rpx;
+    font-size: 22rpx;
+    color: var(--copper);
+    font-weight: 500;
+    opacity: 0;
+    transform: translateX(-10rpx);
+    transition: all 0.3s ease;
+  }
+
+  .product-item:hover .product-detail-btn {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .arrow-right {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 28rpx;
+    height: 14rpx;
+  }
+
+  .arrow-right.small {
+    width: 20rpx;
+    height: 10rpx;
+  }
+
+  .arrow-line {
+    width: 100%;
+    height: 2rpx;
+    background: var(--copper);
+  }
+
+  .arrow-tip {
+    position: absolute;
+    right: 0;
+    width: 10rpx;
+    height: 10rpx;
+    border-top: 2rpx solid var(--copper);
+    border-right: 2rpx solid var(--copper);
+    transform: rotate(45deg);
   }
 }
 </style>
