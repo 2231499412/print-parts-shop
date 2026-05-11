@@ -2,8 +2,8 @@
   <view class="page">
     <!-- 登录页 -->
     <view class="login-page" v-if="view === 'login'">
-      <view class="login-back" @tap="goBack">
-        <text>< 返回首页</text>
+      <view class="login-back" @tap="goBack" :style="{ top: statusBarHeight + 'px' }">
+        <text>← 返回首页</text>
       </view>
       <view class="login-card">
         <view class="login-icon">
@@ -29,7 +29,7 @@
 
     <!-- 产品列表 -->
     <view class="list-page" v-if="view === 'list'">
-      <view class="top-bar">
+      <view class="top-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
         <text class="top-title">产品管理</text>
         <view class="top-actions">
           <view class="top-btn add-btn" @tap="goAdd">
@@ -72,9 +72,9 @@
 
     <!-- 编辑表单 -->
     <view class="edit-page" v-if="view === 'edit'">
-      <view class="top-bar">
+      <view class="top-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
         <view class="back-btn" @tap="goList">
-          <text>< 返回</text>
+          <text>← 返回</text>
         </view>
         <text class="top-title">{{ form._id ? '编辑产品' : '添加产品' }}</text>
         <view class="top-btn save-btn" @tap="doSave">
@@ -186,10 +186,15 @@ export default {
       categoryOptions: CATEGORIES,
       brandIndex: 0,
       categoryIndex: 0,
-      uploading: false
+      uploading: false,
+      statusBarHeight: 20
     }
   },
   onLoad() {
+    try {
+      const sysInfo = uni.getSystemInfoSync()
+      this.statusBarHeight = sysInfo.statusBarHeight || 20
+    } catch {}
     const saved = uni.getStorageSync('admin_auth')
     if (saved === ADMIN_PASSWORD) {
       this.view = 'list'
@@ -393,10 +398,10 @@ export default {
   top: 0;
   left: 0;
   padding: 20rpx 28rpx;
-  padding-top: calc(20rpx + env(safe-area-inset-top));
   font-size: 28rpx;
   color: #B87333;
   font-weight: 600;
+  z-index: 10;
 }
 
 .login-card {
@@ -494,7 +499,6 @@ export default {
   justify-content: space-between;
   padding: 20rpx 28rpx;
   background: #1A1D23;
-  padding-top: calc(20rpx + env(safe-area-inset-top));
 }
 
 .top-title {
