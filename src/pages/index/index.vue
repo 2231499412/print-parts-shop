@@ -685,6 +685,8 @@ export default {
 
 .product-info {
   padding: 24rpx;
+  display: flex;
+  flex-direction: column;
 }
 
 .product-name {
@@ -706,7 +708,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 16rpx;
+  margin-top: auto;
+  padding-top: 16rpx;
 }
 
 .product-price {
