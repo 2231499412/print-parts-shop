@@ -128,7 +128,7 @@
           </view>
           <view class="product-info">
             <view class="product-name">{{ p.name }}</view>
-            <view class="product-spec">{{ p.spec }}</view>
+            <view class="product-spec">{{ p.spec || ' ' }}</view>
             <view class="product-bottom">
               <text class="product-price">{{ getMinPrice(p) }}</text>
               <text class="product-brand-tag">{{ p.brand }}</text>
