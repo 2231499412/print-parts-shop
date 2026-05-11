@@ -129,7 +129,24 @@ export async function fetchProducts() {
     // #ifdef MP-WEIXIN
     const list = await cloudCall('list')
     if (Array.isArray(list) && list.length > 0) {
-      const result = await Promise.all(list.map(normalizeProductMp))
+      // 批量解析云存储图片URL（一次请求 instead of N次）
+      const fileIDs = list.filter(p => p.image && p.image.startsWith('cloud://')).map(p => p.image)
+      if (fileIDs.length > 0) {
+        try {
+          const res = await wx.cloud.getTempFileURL({ fileList: fileIDs })
+          const urlMap = {}
+          res.fileList.forEach(f => { if (f.tempFileURL) urlMap[f.fileID] = f.tempFileURL })
+          list.forEach(p => {
+            if (urlMap[p.image]) p.image = urlMap[p.image]
+          })
+          Object.keys(urlMap).forEach(k => urlCache.set(k, urlMap[k]))
+        } catch {}
+      }
+      const result = list.map(p => {
+        if (!Array.isArray(p.variants)) p.variants = []
+        p.id = p._id
+        return p
+      })
       productsCache = result
       productsCacheTime = now
       return result
