@@ -2,6 +2,9 @@
   <view class="page">
     <!-- 登录页 -->
     <view class="login-page" v-if="view === 'login'">
+      <view class="login-back" @tap="goBack">
+        <text>< 返回首页</text>
+      </view>
       <view class="login-card">
         <view class="login-icon">
           <view class="lock-body"></view>
@@ -194,6 +197,9 @@ export default {
     }
   },
   methods: {
+    goBack() {
+      uni.navigateBack()
+    },
     doLogin() {
       if (this.password === ADMIN_PASSWORD) {
         uni.setStorageSync('admin_auth', ADMIN_PASSWORD)
@@ -375,9 +381,22 @@ export default {
 .login-page {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 40rpx;
+  position: relative;
+}
+
+.login-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 20rpx 28rpx;
+  padding-top: calc(20rpx + env(safe-area-inset-top));
+  font-size: 28rpx;
+  color: #B87333;
+  font-weight: 600;
 }
 
 .login-card {
