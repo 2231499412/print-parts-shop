@@ -115,8 +115,8 @@
           v-for="(p, i) in hotProducts"
           :key="p.id"
           :style="{ animationDelay: i * 0.1 + 's' }"
-          @tap="goProduct(p.id)"
         >
+          <view class="product-card-inner" @tap="goProduct(p.id)">
           <view class="product-img">
             <image v-if="p.image" class="product-img-real" :src="p.image" mode="aspectFill" lazy-load />
             <view class="product-img-deco" v-if="!p.image">
@@ -133,6 +133,7 @@
               <text class="product-price">{{ getMinPrice(p) }}</text>
               <text class="product-brand-tag">{{ p.brand }}</text>
             </view>
+          </view>
           </view>
         </view>
       </view>
@@ -578,16 +579,14 @@ export default {
 .product-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
+  padding: 0 12rpx;
 }
 
 .product-card {
-  width: calc(50% - 10rpx);
-  background: var(--surface-raised);
-  border-radius: 16rpx;
-  overflow: hidden;
-  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.04);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 50%;
+  padding: 0 8rpx;
+  margin-bottom: 16rpx;
+  box-sizing: border-box;
   animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
   cursor: pointer;
 }
@@ -595,6 +594,15 @@ export default {
 .product-card:hover {
   transform: translateY(-6rpx);
   box-shadow: 0 16rpx 48rpx rgba(0,0,0,0.1);
+}
+
+.product-card-inner {
+  background: var(--surface-raised);
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 16rpx rgba(0,0,0,0.04);
+  border: 1rpx solid var(--slate-100);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .product-img {
@@ -860,7 +868,7 @@ export default {
   }
 
   .product-card {
-    width: calc(25% - 15rpx);
+    width: 25%;
   }
 
   .product-img {

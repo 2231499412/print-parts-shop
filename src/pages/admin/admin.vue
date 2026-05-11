@@ -170,7 +170,6 @@
 <script>
 import { cloudCall, clearProductsCache, uploadImage, deleteCloudFile } from '@/utils/api'
 
-const ADMIN_PASSWORD = '194821'
 const BRANDS = ['海德堡', '小森', '罗兰', '通用']
 const CATEGORIES = ['易损件', '耗材', '配件', '电气件', '核心部件']
 
@@ -201,7 +200,7 @@ export default {
       // #endif
     } catch {}
     const saved = uni.getStorageSync('admin_auth')
-    if (saved === ADMIN_PASSWORD) {
+    if (saved) {
       this.view = 'list'
       this.loadProducts()
     }
@@ -210,13 +209,22 @@ export default {
     goBack() {
       uni.navigateBack()
     },
-    doLogin() {
-      if (this.password === ADMIN_PASSWORD) {
-        uni.setStorageSync('admin_auth', ADMIN_PASSWORD)
-        this.loginError = false
-        this.view = 'list'
-        this.loadProducts()
-      } else {
+    async doLogin() {
+      if (!this.password) return
+      uni.showLoading({ title: '验证中' })
+      try {
+        const res = await cloudCall('auth', { password: this.password })
+        uni.hideLoading()
+        if (res && res.ok) {
+          uni.setStorageSync('admin_auth', '1')
+          this.loginError = false
+          this.view = 'list'
+          this.loadProducts()
+        } else {
+          this.loginError = true
+        }
+      } catch {
+        uni.hideLoading()
         this.loginError = true
       }
     },

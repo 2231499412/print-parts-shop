@@ -43,6 +43,16 @@
       </view>
     </view>
 
+    <view class="share-section">
+      <button class="share-btn" open-type="share">
+        <view class="share-icon">
+          <view class="share-arrow"></view>
+          <view class="share-line"></view>
+        </view>
+        <text>分享给朋友</text>
+      </button>
+    </view>
+
     <view class="footer">
       <view class="footer-divider">
         <view class="divider-line"></view>
@@ -136,6 +146,12 @@ import config from '@/static/data/config.json'
 export default {
   data() {
     return { config }
+  },
+  onShareAppMessage() {
+    return {
+      title: '印刷配件资料库 - 海德堡·小森·罗兰配件速查',
+      path: '/pages/index/index'
+    }
   },
   methods: {
     copyWechat() {
@@ -500,6 +516,60 @@ export default {
   font-weight: 700;
   color: var(--slate-900);
   letter-spacing: 2rpx;
+}
+
+/* ========== 分享 ========== */
+.share-section {
+  padding: 0 28rpx;
+  margin-top: 8rpx;
+}
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  background: var(--surface-raised);
+  border-radius: 18rpx;
+  padding: 32rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--copper);
+  border: 1rpx solid var(--slate-100);
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.03);
+  line-height: 1;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.share-icon {
+  width: 36rpx;
+  height: 36rpx;
+  position: relative;
+}
+
+.share-arrow {
+  position: absolute;
+  top: 2rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10rpx solid transparent;
+  border-right: 10rpx solid transparent;
+  border-bottom: 12rpx solid var(--copper);
+}
+
+.share-line {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4rpx;
+  height: 20rpx;
+  background: var(--copper);
 }
 
 /* ========== 底部 ========== */

@@ -3,10 +3,15 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const col = db.collection('products')
 
+const ADMIN_PASSWORD = '194821'
+
 exports.main = async (event) => {
   const { action, id, data } = event
 
   switch (action) {
+    case 'auth': {
+      return { ok: event.password === ADMIN_PASSWORD }
+    }
     case 'list': {
       const { data: list } = await col.orderBy('created_at', 'desc').limit(100).get()
       return list.map(formatProduct)
