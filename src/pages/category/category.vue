@@ -545,6 +545,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-height: 30rpx;
 }
 
 .product-bottom {
