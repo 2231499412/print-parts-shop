@@ -223,8 +223,10 @@ export default {
         } else {
           this.loginError = true
         }
-      } catch {
+      } catch (e) {
         uni.hideLoading()
+        const msg = e && e.errMsg && e.errMsg.includes('timeout') ? '网络超时，请重试' : '验证失败'
+        uni.showToast({ title: msg, icon: 'none' })
         this.loginError = true
       }
     },
