@@ -29,7 +29,7 @@
 
     <!-- 产品列表 -->
     <view class="list-page" v-if="view === 'list'">
-      <view class="top-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="top-bar" :style="{ paddingTop: statusBarHeight + 'px', paddingRight: capsuleRight + 'px' }">
         <text class="top-title">产品管理</text>
         <view class="top-actions">
           <view class="top-btn add-btn" @tap="goAdd">
@@ -72,7 +72,7 @@
 
     <!-- 编辑表单 -->
     <view class="edit-page" v-if="view === 'edit'">
-      <view class="top-bar" :style="{ paddingTop: statusBarHeight + 'px' }">
+      <view class="top-bar" :style="{ paddingTop: statusBarHeight + 'px', paddingRight: capsuleRight + 'px' }">
         <view class="back-btn" @tap="goList">
           <text>← 返回</text>
         </view>
@@ -170,7 +170,7 @@
 <script>
 import { cloudCall, clearProductsCache, uploadImage, deleteCloudFile } from '@/utils/api'
 
-const ADMIN_PASSWORD = 'admin888'
+const ADMIN_PASSWORD = '194821'
 const BRANDS = ['海德堡', '小森', '罗兰', '通用']
 const CATEGORIES = ['易损件', '耗材', '配件', '电气件', '核心部件']
 
@@ -187,13 +187,18 @@ export default {
       brandIndex: 0,
       categoryIndex: 0,
       uploading: false,
-      statusBarHeight: 20
+      statusBarHeight: 20,
+      capsuleRight: 100
     }
   },
   onLoad() {
     try {
       const sysInfo = uni.getSystemInfoSync()
       this.statusBarHeight = sysInfo.statusBarHeight || 20
+      // #ifdef MP-WEIXIN
+      const capsule = wx.getMenuButtonBoundingClientRect()
+      this.capsuleRight = sysInfo.windowWidth - capsule.left + 16
+      // #endif
     } catch {}
     const saved = uni.getStorageSync('admin_auth')
     if (saved === ADMIN_PASSWORD) {
