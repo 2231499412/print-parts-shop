@@ -15,7 +15,7 @@
           <!-- #endif -->
         </view>
         <!-- #ifdef MP-WEIXIN -->
-        <view class="hero-title">印刷配件资料库</view>
+        <view class="hero-title" @tap="onTitleTap">印刷配件资料库</view>
         <view class="hero-title hero-title-accent">海德堡 · 小森 · 罗兰</view>
         <view class="hero-desc">印刷机配件规格参数速查</view>
         <!-- #endif -->
@@ -182,6 +182,8 @@ export default {
       keyword: '',
       brands: config.brands.filter(b => b.name !== '通用'),
       hotProducts: [],
+      adminTapCount: 0,
+      adminTapTimer: null,
       advantages: [
         { title: '原厂品质', desc: '全部配件经过严格质检' },
         { title: '品牌齐全', desc: '覆盖主流印刷机品牌' },
@@ -213,6 +215,16 @@ export default {
     },
     goProduct(id) {
       uni.navigateTo({ url: `/pages/product/product?id=${id}` })
+    },
+    onTitleTap() {
+      this.adminTapCount++
+      clearTimeout(this.adminTapTimer)
+      if (this.adminTapCount >= 5) {
+        this.adminTapCount = 0
+        uni.navigateTo({ url: '/pages/admin/admin' })
+      } else {
+        this.adminTapTimer = setTimeout(() => { this.adminTapCount = 0 }, 2000)
+      }
     }
   }
 }

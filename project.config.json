@@ -1,6 +1,7 @@
 {
   "description": "项目配置文件。",
   "cloudfunctionRoot": "cloudfunctions/",
+  "cloudbaseRoot": "cloudfunctions/",
   "packOptions": {
     "ignore": []
   },
@@ -18,6 +19,7 @@
   "libVersion": "3.7.9",
   "appid": "wxbe58d14166dc19a6",
   "projectname": "印刷配件资料库",
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
   "condition": {
     "search": {
       "current": -1,

@@ -26,10 +26,22 @@ function request(url, options = {}) {
     })
   })
 }
+
+export function cloudCall() {
+  return Promise.reject(new Error('仅支持小程序端'))
+}
+
+export function uploadImage() {
+  return Promise.reject(new Error('仅支持小程序端'))
+}
+
+export function deleteCloudFile() {
+  return Promise.resolve()
+}
 // #endif
 
 // #ifdef MP-WEIXIN
-function cloudCall(action, data = {}) {
+export function cloudCall(action, data = {}) {
   return new Promise((resolve, reject) => {
     wx.cloud.callFunction({
       name: 'products',
@@ -53,6 +65,22 @@ async function resolveCloudImage(fileID) {
     return url
   } catch {
     return fileID
+  }
+}
+
+export async function uploadImage(filePath) {
+  const ext = filePath.split('.').pop() || 'jpg'
+  const cloudPath = 'products/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext
+  const res = await wx.cloud.uploadFile({ cloudPath, filePath })
+  return res.fileID
+}
+
+export async function deleteCloudFile(fileID) {
+  if (!fileID || !fileID.startsWith('cloud://')) return
+  try {
+    await wx.cloud.deleteFile({ fileList: [fileID] })
+  } catch (e) {
+    console.warn('删除云文件失败:', e)
   }
 }
 // #endif
