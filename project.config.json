@@ -1,0 +1,39 @@
+{
+  "description": "项目配置文件。",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "packOptions": {
+    "ignore": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "bigPackageSizeSupport": true,
+    "wxml": true,
+    "uglifyFileName": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.7.9",
+  "appid": "wxbe58d14166dc19a6",
+  "projectname": "印刷配件资料库",
+  "condition": {
+    "search": {
+      "current": -1,
+      "list": []
+    },
+    "conversation": {
+      "current": -1,
+      "list": []
+    },
+    "game": {
+      "current": -1,
+      "list": []
+    },
+    "miniprogram": {
+      "current": -1,
+      "list": []
+    }
+  }
+}

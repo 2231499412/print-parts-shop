@@ -2,7 +2,6 @@ import staticProducts from '@/static/data/products.json'
 import staticConfig from '@/static/data/config.json'
 
 // #ifdef MP-WEIXIN
-const API_BASE = 'https://177800.xyz'
 const IS_MP = true
 // #endif
 // #ifndef MP-WEIXIN
@@ -10,6 +9,7 @@ const API_BASE = ''
 const IS_MP = false
 // #endif
 
+// #ifndef MP-WEIXIN
 function request(url, options = {}) {
   return new Promise((resolve, reject) => {
     uni.request({
@@ -26,12 +26,41 @@ function request(url, options = {}) {
     })
   })
 }
+// #endif
+
+// #ifdef MP-WEIXIN
+function cloudCall(action, data = {}) {
+  return new Promise((resolve, reject) => {
+    wx.cloud.callFunction({
+      name: 'products',
+      data: { action, ...data },
+      success: res => resolve(res.result),
+      fail: err => reject(err)
+    })
+  })
+}
+
+// 云存储图片临时URL缓存
+const urlCache = new Map()
+
+async function resolveCloudImage(fileID) {
+  if (!fileID || !fileID.startsWith('cloud://')) return fileID
+  if (urlCache.has(fileID)) return urlCache.get(fileID)
+  try {
+    const res = await wx.cloud.getTempFileURL({ fileList: [fileID] })
+    const url = res.fileList[0].tempFileURL
+    urlCache.set(fileID, url)
+    return url
+  } catch {
+    return fileID
+  }
+}
+// #endif
 
 function normalizeProduct(p) {
+  if (!p) return p
   if (p.image_data && p.image_data.startsWith('data:')) {
     p.image = p.image_data
-  } else if (p.image && p.image.startsWith('/') && IS_MP) {
-    p.image = API_BASE + p.image
   }
   delete p.image_data
   if (typeof p.variants === 'string') {
@@ -69,6 +98,16 @@ export async function fetchProducts() {
     return productsCache
   }
   try {
+    // #ifdef MP-WEIXIN
+    const list = await cloudCall('list')
+    if (Array.isArray(list) && list.length > 0) {
+      const result = await Promise.all(list.map(normalizeProductMp))
+      productsCache = result
+      productsCacheTime = now
+      return result
+    }
+    // #endif
+    // #ifndef MP-WEIXIN
     const data = await request('/products')
     if (Array.isArray(data) && data.length > 0) {
       const result = data.map(normalizeProduct)
@@ -76,6 +115,7 @@ export async function fetchProducts() {
       productsCacheTime = now
       return result
     }
+    // #endif
     return staticProducts
   } catch {
     return staticProducts
@@ -86,6 +126,9 @@ export function clearProductsCache() {
   productsCache = null
   productsCacheTime = 0
   productDetailCache.clear()
+  // #ifdef MP-WEIXIN
+  urlCache.clear()
+  // #endif
 }
 
 // 单品详情缓存
@@ -97,17 +140,41 @@ export async function fetchProduct(id) {
     return cached.data
   }
   try {
+    // #ifdef MP-WEIXIN
+    const item = await cloudCall('get', { id })
+    if (item && item._id) {
+      const result = await normalizeProductMp(item)
+      productDetailCache.set(id, { data: result, time: Date.now() })
+      return result
+    }
+    // #endif
+    // #ifndef MP-WEIXIN
     const data = await request(`/products?id=${id}`)
     if (data && data.id) {
       const result = normalizeProduct(data)
       productDetailCache.set(id, { data: result, time: Date.now() })
       return result
     }
+    // #endif
     return staticProducts.find(p => p.id === id) || null
   } catch {
     return staticProducts.find(p => p.id === id) || null
   }
 }
+
+// #ifdef MP-WEIXIN
+async function normalizeProductMp(p) {
+  if (!p) return p
+  // 云存储图片解析为临时URL
+  if (p.image && p.image.startsWith('cloud://')) {
+    p.image = await resolveCloudImage(p.image)
+  }
+  if (!Array.isArray(p.variants)) p.variants = []
+  // 兼容前端：用 _id 作为 id
+  p.id = p._id
+  return p
+}
+// #endif
 
 export function getConfig() {
   return staticConfig

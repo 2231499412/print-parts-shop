@@ -134,7 +134,7 @@ export default {
     }
   },
   async onLoad(options) {
-    const id = parseInt(options.id)
+    const id = isNaN(options.id) ? options.id : parseInt(options.id)
     this.product = await fetchProduct(id)
     if (this.product) {
       if (this.product.variants && this.product.variants.length > 0) {
