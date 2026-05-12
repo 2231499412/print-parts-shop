@@ -57,7 +57,7 @@
         </view>
       </view>
       <view class="qr-box" @tap="previewQrcode">
-        <image class="qr-image" src="/static/code.jpg" mode="aspectFit" @load="onQrLoad" @error="onQrError" />
+        <image class="qr-image" src="/static/code.jpg" mode="widthFix" @load="onQrLoad" @error="onQrError" />
       </view>
       <text class="qr-tip">长按识别二维码添加微信</text>
     </view>
@@ -467,7 +467,6 @@ export default {
 
 .qr-image {
   width: 100%;
-  height: 100%;
   border-radius: 12rpx;
 }
 
