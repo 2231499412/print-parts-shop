@@ -201,9 +201,6 @@ export default {
     },
     onQrError(e) {
       console.error('二维码加载失败:', e)
-    },
-    previewQrcode() {
-      uni.previewImage({ urls: [this.config.qrcode] })
     }
   }
 }
