@@ -57,7 +57,7 @@
         </view>
       </view>
       <view class="qr-box" @tap="previewQrcode">
-        <image class="qr-image" :src="config.qrcode" mode="aspectFit" />
+        <image class="qr-image" src="/static/code.jpg" mode="aspectFit" @load="onQrLoad" @error="onQrError" />
       </view>
       <text class="qr-tip">长按识别二维码添加微信</text>
     </view>
@@ -195,6 +195,12 @@ export default {
     },
     previewQrcode() {
       uni.previewImage({ urls: [this.config.qrcode] })
+    },
+    onQrLoad() {
+      console.log('二维码加载成功')
+    },
+    onQrError(e) {
+      console.error('二维码加载失败:', e)
     },
     previewQrcode() {
       uni.previewImage({ urls: [this.config.qrcode] })
