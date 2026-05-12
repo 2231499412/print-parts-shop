@@ -95,14 +95,17 @@
     <!-- #ifdef MP-WEIXIN -->
     <!-- 底部联系栏（小程序） -->
     <view class="bottom-bar">
-      <view class="bottom-bar-info">
-        <text class="bottom-bar-tip">如有数据疑问或意见反馈</text>
+      <view class="btn btn-wechat" @tap="copyWechat">
+        <view class="btn-icon-wrap">
+          <view class="icon-wechat"></view>
+        </view>
+        <text>复制微信</text>
       </view>
       <view class="btn btn-phone" @tap="callPhone">
         <view class="btn-icon-wrap">
           <view class="icon-phone"></view>
         </view>
-        <text>18938663681</text>
+        <text>拨打电话</text>
       </view>
     </view>
     <!-- #endif -->
@@ -131,6 +134,12 @@ export default {
     },
     hasVariants() {
       return this.product && this.product.variants && this.product.variants.length > 0
+    }
+  },
+  onShareAppMessage() {
+    return {
+      title: this.product ? this.product.name + ' - 印刷配件资料库' : '印刷配件资料库',
+      path: '/pages/product/product?id=' + (this.product ? this.product.id : '')
     }
   },
   async onLoad(options) {

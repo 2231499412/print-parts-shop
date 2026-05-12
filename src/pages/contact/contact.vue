@@ -33,13 +33,28 @@
     </view>
 
     <view class="qr-section">
-      <view class="qr-title">意见反馈</view>
-      <view class="qr-desc">如有数据纠错或使用问题，欢迎反馈</view>
-      <view class="feedback-phone" @tap="callFeedback">
-        <view class="card-icon-wrap phone-bg">
-          <view class="card-icon-phone"></view>
+      <view class="qr-title">联系方式</view>
+      <view class="contact-list">
+        <view class="contact-item" @tap="copyWechat">
+          <view class="card-icon-wrap wechat-bg">
+            <view class="card-icon-wechat"></view>
+          </view>
+          <view class="contact-info">
+            <text class="contact-label">微信号</text>
+            <text class="contact-value">{{ config.wechat }}</text>
+          </view>
+          <text class="contact-action">复制</text>
         </view>
-        <text class="phone-text">18938663681</text>
+        <view class="contact-item" @tap="callPhone">
+          <view class="card-icon-wrap phone-bg">
+            <view class="card-icon-phone"></view>
+          </view>
+          <view class="contact-info">
+            <text class="contact-label">联系电话</text>
+            <text class="contact-value">{{ config.phone }}</text>
+          </view>
+          <text class="contact-action">拨打</text>
+        </view>
       </view>
     </view>
 
@@ -501,6 +516,46 @@ export default {
   font-size: 26rpx;
   color: var(--slate-400);
   margin-bottom: 32rpx;
+}
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: var(--slate-50);
+  border-radius: 12rpx;
+  cursor: pointer;
+}
+
+.contact-info {
+  flex: 1;
+  margin-left: 20rpx;
+}
+
+.contact-label {
+  font-size: 22rpx;
+  color: var(--slate-400);
+  display: block;
+}
+
+.contact-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--slate-900);
+  margin-top: 4rpx;
+  display: block;
+}
+
+.contact-action {
+  font-size: 24rpx;
+  color: var(--copper);
+  font-weight: 600;
 }
 
 .feedback-phone {

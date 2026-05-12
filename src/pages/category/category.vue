@@ -209,6 +209,12 @@ export default {
       return list
     }
   },
+  onShareAppMessage() {
+    return {
+      title: '印刷配件分类 - 海德堡·小森·罗兰配件速查',
+      path: '/pages/category/category'
+    }
+  },
   async onLoad(options) {
     if (options.brand) this.activeBrand = options.brand
     if (options.keyword) this.keyword = options.keyword

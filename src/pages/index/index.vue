@@ -193,6 +193,12 @@ export default {
       ]
     }
   },
+  onShareAppMessage() {
+    return {
+      title: '印刷配件资料库 - 海德堡·小森·罗兰配件速查',
+      path: '/pages/index/index'
+    }
+  },
   async onShow() {
     const products = await fetchProducts()
     this.hotProducts = products.filter(p => p.hot)
