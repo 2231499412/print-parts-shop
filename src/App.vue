@@ -101,12 +101,10 @@ view, text {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.clickable:active {
-  opacity: 0.85;
-  transform: scale(0.97);
-}
-
 /* ========== Scrollbar ========== */
+scroll-view {
+  -webkit-overflow-scrolling: touch;
+}
 ::-webkit-scrollbar {
   width: 4px;
 }

@@ -22,7 +22,7 @@
             <view class="clear-line-2"></view>
           </view>
         </view>
-        <view class="search-btn" @tap="doSearch">
+        <view class="search-btn" hover-class="search-btn-hover" @tap="doSearch">
           <text>搜索</text>
         </view>
       </view>
@@ -215,6 +215,12 @@ export default {
       path: '/pages/category/category'
     }
   },
+  onShareTimeline() {
+    return {
+      title: '印刷配件分类 - 海德堡·小森·罗兰配件速查',
+      path: '/pages/category/category'
+    }
+  },
   async onLoad(options) {
     if (options.brand) this.activeBrand = options.brand
     if (options.keyword) this.keyword = options.keyword
@@ -386,7 +392,7 @@ export default {
   transition: background 0.2s ease;
 }
 
-.search-btn:active {
+.search-btn-hover {
   background: var(--copper-dark);
 }
 

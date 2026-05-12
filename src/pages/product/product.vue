@@ -72,19 +72,19 @@
     <!-- #ifndef MP-WEIXIN -->
     <!-- 底部联系栏（H5） -->
     <view class="bottom-bar">
-      <view class="btn btn-wechat" @tap="copyWechat">
+      <view class="btn btn-wechat" hover-class="btn-hover" @tap="copyWechat">
         <view class="btn-icon-wrap">
           <view class="icon-wechat"></view>
         </view>
         <text>复制微信</text>
       </view>
-      <view class="btn btn-phone" @tap="callPhone">
+      <view class="btn btn-phone" hover-class="btn-hover" @tap="callPhone">
         <view class="btn-icon-wrap">
           <view class="icon-phone"></view>
         </view>
         <text>拨打电话</text>
       </view>
-      <view class="btn btn-qr" @tap="showQrcode">
+      <view class="btn btn-qr" hover-class="btn-hover" @tap="showQrcode">
         <view class="btn-icon-wrap">
           <view class="icon-qr"></view>
         </view>
@@ -95,13 +95,13 @@
     <!-- #ifdef MP-WEIXIN -->
     <!-- 底部联系栏（小程序） -->
     <view class="bottom-bar">
-      <view class="btn btn-wechat" @tap="copyWechat">
+      <view class="btn btn-wechat" hover-class="btn-hover" @tap="copyWechat">
         <view class="btn-icon-wrap">
           <view class="icon-wechat"></view>
         </view>
         <text>复制微信</text>
       </view>
-      <view class="btn btn-phone" @tap="callPhone">
+      <view class="btn btn-phone" hover-class="btn-hover" @tap="callPhone">
         <view class="btn-icon-wrap">
           <view class="icon-phone"></view>
         </view>
@@ -137,6 +137,12 @@ export default {
     }
   },
   onShareAppMessage() {
+    return {
+      title: this.product ? this.product.name + ' - 印刷配件资料库' : '印刷配件资料库',
+      path: '/pages/product/product?id=' + (this.product ? this.product.id : '')
+    }
+  },
+  onShareTimeline() {
     return {
       title: this.product ? this.product.name + ' - 印刷配件资料库' : '印刷配件资料库',
       path: '/pages/product/product?id=' + (this.product ? this.product.id : '')
@@ -488,7 +494,7 @@ export default {
   transition: all 0.2s ease;
 }
 
-.btn:active {
+.btn-hover {
   transform: scale(0.96);
 }
 

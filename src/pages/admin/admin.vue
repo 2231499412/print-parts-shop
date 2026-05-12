@@ -20,7 +20,7 @@
           placeholder="输入密码"
           @confirm="doLogin"
         />
-        <view class="login-btn" @tap="doLogin">
+        <view class="login-btn" hover-class="login-btn-hover" @tap="doLogin">
           <text>登 录</text>
         </view>
         <text class="login-hint" v-if="loginError">密码错误</text>
@@ -497,7 +497,7 @@ export default {
   font-weight: 600;
 }
 
-.login-btn:active {
+.login-btn-hover {
   opacity: 0.85;
 }
 

@@ -56,6 +56,10 @@
           <text class="contact-action">拨打</text>
         </view>
       </view>
+      <view class="qr-box" @tap="previewQrcode">
+        <image class="qr-image" :src="config.qrcode" mode="aspectFit" />
+      </view>
+      <text class="qr-tip">长按识别二维码添加微信</text>
     </view>
 
     <view class="share-section">
@@ -168,6 +172,12 @@ export default {
       path: '/pages/index/index'
     }
   },
+  onShareTimeline() {
+    return {
+      title: '印刷配件资料库 - 海德堡·小森·罗兰配件速查',
+      path: '/pages/index/index'
+    }
+  },
   methods: {
     copyWechat() {
       uni.setClipboardData({
@@ -182,6 +192,9 @@ export default {
     },
     callFeedback() {
       uni.makePhoneCall({ phoneNumber: '18938663681' })
+    },
+    previewQrcode() {
+      uni.previewImage({ urls: [this.config.qrcode] })
     },
     previewQrcode() {
       uni.previewImage({ urls: [this.config.qrcode] })
